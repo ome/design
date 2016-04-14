@@ -17,63 +17,84 @@ of IDR with the [CLI children plugin](https://github.com/openmicroscopy/openmicr
 The current consensus is to preserve the `obj` plugin for the manipulation of
 individual objects and design a new plugin for graph/set tasks. For now, we will use the term `tree` to refer to this new plugin.
 
-This plugin could include a set of subcommands so that individual calls would take the form:
+## Tree plugin
 
-    bin/omero tree subcommand source [target]
+This plugin could include a set of subcommands. Each subcommand could either
+be a read operation applied to a graph specified by the `graph-spec` argument:
 
-## Proposed subcommands
+    bin/omero tree read-operation graph-spec
+
+or a write operations applied to a `graph-spec` argument with an optional
+`object-spec` target:
+
+    bin/omero tree write-operation graph-spec [obj-spec]
+
+## Proposed graph specifications
+
+A curent unknown is the format(s) that should be supported by `graph-specs`.
+There are 2 general approaches
+
+-   either stay close to the current `obj-spec` format, i.e. `Object:id`
+-   or move towards xpath-like formats e.g. `//Image/*`, `Image[name=xxx]`, `Screen:id/*/Roi:*`
+
+If sticking to the first option, we might still need a representation of
+orphans either using `Image:orphan` or `Image --orphan.`
+
+## Tree subcommands
 
 Below is a list of proposed subcommands with use cases
 
-### Move
+### LInk
 
-#### Moving orphaned images into a dataset
+Move orphaned images into a dataset:
 
-    omero tree move Image:orphan Dataset:1
-    omero tree move //Image:* Dataset:1
+      omero tree link Image:orphan Dataset:1
+      omero tree link //Image:* Dataset:1
 
-#### Moving  images in between datasets
+Link images in between datasets
 
-    omero tree move Dataset:1 Dataset:2
-    omero tree move Dataset:1/Image:* Dataset:2
+    omero tree link Dataset:1 Dataset:2
+    omero tree link Dataset:1/Image:* Dataset:2
 
-#### Move all Regions of interest into a folder
+Link all Regions of interest to a folder
 
-    omero tree move Image:1/Roi:* Folder:1
-    omero tree move Screen:1/Roi:* Folder:2
-    omero tree move Screen:1/*/Roi:* Folder:2
+    omero tree link Image:1/Roi:* Folder:1
+    omero tree link Screen:1/Roi:* Folder:2
+    omero tree link Screen:1/*/Roi:* Folder:2
 
-### Delete
+### Unlink
 
-This has to do with unlinking
+Orphan all images in a dataset
 
-#### Orphan all images in a dataset
-
-    omero tree delete Dataset:1
+    omero tree unlink Dataset:1
 
 ### Copy
 
-#### Link all images in one dataset into another
+Link all images in one dataset into another
 
     omero tree copy Dataset:1 Dataset:2
     omero tree copy Dataset:1/* Dataset:2
 
 ### List
 
-#### Listing containers/folders content
+List containers/folders content
 
     omero tree ls Dataset:1
     omero tree ls Folder:1
 
-#### Listing orphaned objects
+List orphaned objects
 
     omero tree ls --orphan
     omero tree ls Image:orphan
 
-#### Listing objects with filter
+Listing objects with filter
 
     omero tree ls Screen:1 --filter FileAnnotation[ns='bulk-annotation']
     omero tree ls Screen:1/*/FileAnnotation[ns='bulk-annotation']
+
+Return the object identifiers only
+
+    omero tree ls Dataset:1 --ids
 
 Open questions
 --------------
