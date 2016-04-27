@@ -29,22 +29,22 @@ or a write operations applied to a `graph-spec` argument with an optional
 
     bin/omero tree write-operation graph-spec [obj-spec]
 
-## Proposed graph specifications
+## Input specification
 
-A curent unknown is the format(s) that should be supported by `graph-specs`.
-There are 2 general approaches
+There are 2 proposed formats that could be supported when specifying the input
+`graph-spec`:
 
 -   either stay close to the current `obj-spec` format, i.e. `Object:id`
 -   or move towards xpath-like formats e.g. `//Image/*`, `Image[name=xxx]`, `Screen:id/*/Roi:*`
 
-If sticking to the first option, we might still need a representation of
-orphans either using `Image:orphan` or `Image --orphan.`
+If sticking to the first option, the proposed representation of orphaned
+objects would be `Image:orphan`.
 
 ## Tree subcommands
 
-Below is a list of proposed subcommands with use cases
+Below is a list of proposed subcommands with use cases.
 
-### LInk
+### Link
 
 Move orphaned images into a dataset:
 
@@ -87,7 +87,8 @@ List orphaned objects
     omero tree ls --orphan
     omero tree ls Image:orphan
 
-Listing objects with filter
+
+List objects with filter
 
     omero tree ls Screen:1 --filter FileAnnotation[ns='bulk-annotation']
     omero tree ls Screen:1/*/FileAnnotation[ns='bulk-annotation']
@@ -96,10 +97,6 @@ Return the object identifiers only
 
     omero tree ls Dataset:1 --ids
 
-Open questions
---------------
+Format the returned objects in a YML style
 
-- orphaned representation (`orphan` string vs option vs graph representation)
-- output of the listing commands? for piping the output of the listing into bulk annotation scripts, retrieving a list of ids would be good
-- subcommand vs options, i.e. `tree copy` vs `tree --copy`
-- naming: link vs copy? move vs cut&paste? delete vs unlink? 
+    omero tree ls Dataset:1 --output=yml
