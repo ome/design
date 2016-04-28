@@ -51,10 +51,24 @@ Move orphaned images into a dataset:
       omero tree link Image:orphan Dataset:1
       omero tree link //Image:* Dataset:1
 
-Link images in between datasets
+Link images, annotations, and everything in between datasets:
 
-    omero tree link Dataset:1 Dataset:2
     omero tree link Dataset:1/Image:* Dataset:2
+    omero tree link Dataset:1/Annotation:* Dataset:2
+    omero tree link Dataset:1/* Dataset:2
+
+Link a subset of images in between datasets:
+
+    omero tree link Dataset:1/Image[tag=good]:* Dataset:2
+
+
+- This format requires children to be specified explicitly to avoid ambiguity
+
+Unlink objects from one dataset and link into another:
+
+    omero tree move Dataset:1/Image:* Dataset:2
+
+- If an Image is in multiple datasets those other links won't be unaffected
 
 Link all Regions of interest to a folder
 
@@ -97,6 +111,7 @@ Return the object identifiers only
 
     omero tree ls Dataset:1 --ids
 
-Format the returned objects in a YML style
+Format the returned objects in a coice of styles, for example obj-spec, YAML, JSON.
+This part of the specification may also be used in other CLI plugins which output information about omero objects such as `hql`, `import`, etc.
 
     omero tree ls Dataset:1 --output=yml
