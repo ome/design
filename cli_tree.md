@@ -95,6 +95,10 @@ List containers/folders content
 
     omero tree ls Dataset:1
     omero tree ls Folder:1
+    omero tree ls Fileset:1            # Show all entries, images, etc.
+    omero tree ls ExperimenterGroup:*  # Show groups with users
+    omero tree ls Experimenter:*       # Show users with groups
+    omero tree ls TagAnnotation:*      # See existing plugin
 
 List orphaned objects
 
