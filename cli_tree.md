@@ -10,8 +10,8 @@ the form:
 
     bin/omero obj subcommand  Object:id field1=value1 field2=value2 ...
 
-We are facing more use cases where we need to manipulate graphs and sets of 
-objects. A first implementation of such plugin has been provided in the context
+We are facing more use cases where we need to manipulate graphs and sets of
+objects. A first implementation of such a plugin has been provided in the context
 of IDR with the [CLI children plugin](https://github.com/openmicroscopy/openmicroscopy/pull/4182).
 
 The current consensus is to preserve the `obj` plugin for the manipulation of
@@ -95,6 +95,10 @@ List containers/folders content
 
     omero tree ls Dataset:1
     omero tree ls Folder:1
+    omero tree ls Fileset:1            # Show all entries, images, etc.
+    omero tree ls ExperimenterGroup:*  # Show groups with users
+    omero tree ls Experimenter:*       # Show users with groups
+    omero tree ls TagAnnotation:*      # See existing plugin
 
 List orphaned objects
 
