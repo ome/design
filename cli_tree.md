@@ -10,8 +10,8 @@ the form:
 
     bin/omero obj subcommand  Object:id field1=value1 field2=value2 ...
 
-We are facing more use cases where we need to manipulate graphs and sets of 
-objects. A first implementation of such plugin has been provided in the context
+We are facing more use cases where we need to manipulate graphs and sets of
+objects. A first implementation of such a plugin has been provided in the context
 of IDR with the [CLI children plugin](https://github.com/openmicroscopy/openmicroscopy/pull/4182).
 
 The current consensus is to preserve the `obj` plugin for the manipulation of
@@ -51,10 +51,24 @@ Move orphaned images into a dataset:
       omero tree link Image:orphan Dataset:1
       omero tree link //Image:* Dataset:1
 
-Link images in between datasets
+Link images, annotations, and everything in between datasets:
 
-    omero tree link Dataset:1 Dataset:2
     omero tree link Dataset:1/Image:* Dataset:2
+    omero tree link Dataset:1/Annotation:* Dataset:2
+    omero tree link Dataset:1/* Dataset:2
+
+Link a subset of images in between datasets:
+
+    omero tree link Dataset:1/Image[tag=good]:* Dataset:2
+
+
+- This format requires children to be specified explicitly to avoid ambiguity
+
+Unlink objects from one dataset and link into another:
+
+    omero tree move Dataset:1/Image:* Dataset:2
+
+- If an Image is in multiple datasets those other links won't be unaffected
 
 Link all Regions of interest to a folder
 
@@ -81,6 +95,10 @@ List containers/folders content
 
     omero tree ls Dataset:1
     omero tree ls Folder:1
+    omero tree ls Fileset:1            # Show all entries, images, etc.
+    omero tree ls ExperimenterGroup:*  # Show groups with users
+    omero tree ls Experimenter:*       # Show users with groups
+    omero tree ls TagAnnotation:*      # See existing plugin
 
 List orphaned objects
 
@@ -97,6 +115,7 @@ Return the object identifiers only
 
     omero tree ls Dataset:1 --ids
 
-Format the returned objects in a YML style
+Format the returned objects in a coice of styles, for example obj-spec, YAML, JSON.
+This part of the specification may also be used in other CLI plugins which output information about omero objects such as `hql`, `import`, etc.
 
     omero tree ls Dataset:1 --output=yml
