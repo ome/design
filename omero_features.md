@@ -13,7 +13,7 @@ Initially:
 - Feature value columns can be of atomic/scalar or array type
 
 In future:
-- Annotate OMERO objects with the table and row offset, since bulk retrieval of tables rows by offset are supported.
+- Annotate OMERO objects with the table and row offset, since bulk retrieval of table rows by offset are supported.
 
 Main issues:
 - PyTables HDF5 tables are limited in the number of columns, which means array column types may be needed.
@@ -82,7 +82,7 @@ Zero-based indexing should be used for `C`/`Z`/`T`.
 ### Column descriptions
 
 Columns have an optional `description` field.
-This should be either empty or contain a `json` object including opening/closing braces (`{ }`).
+This should be either empty or contain a JSON object including opening/closing braces (`{ }`).
 Top-level keys beginning with `_` are reserved for internal use, all other keys will be ignored and can be used for client purposes.
 
 Currently the following internal keys are defined:
