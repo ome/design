@@ -70,6 +70,7 @@ It is strongly recommended that names match the [regular-expression](http://www.
 This is equivalent to `[^\W\d_]\w*` in the Python 2 `re` module, or `[A-Za-z][A-Za-z0-9_]` if plain ASCII is used.
 
 For ease of parsing OMERO ID columns should be named in the form `<Type><ID>`, for example an `ImageColumn` should be named `ImageID`.
+If there are multiple ID columns the first one should be the *most relevant* if possible to make it easier for users unfamiliar with the data to analyse the features.
 
 If the metadata includes the channel, Z-index or T-index the following names are recommended:
 - Channel: `C`
