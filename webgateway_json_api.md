@@ -45,10 +45,24 @@
 API Overview
 ============
 
-The OMERO json API described here is available from OMERO 5.3.0 release
-at the location
+The OMERO json API described here provides create, read, update and delete
+access to an underlying OMERO server. 
+The majority of the API urls use [omero-marshal](https://github.com/openmicroscopy/omero-marshal)
+to generate json dictionaries from OMERO **model** objects. The json dictionaries will be populated
+with all fields of the OMERO model object, such that changing a single field and sending this
+back to OMERO will update the object accordingly.
+All these url are under the ```m``` prefix:
 
-    <server>/api/
+    <server>/api/m/
+
+
+In addition, a smaller number of API urls perform customised
+queries as used by the webclient. These queries use **projections** and
+typically load a subset of fields for
+OMERO objects in order to improve performance for large data counts.
+These urls are available under the ```p``` prefix:
+
+    <server>/api/p/
 
 
 Pagination
@@ -87,7 +101,7 @@ List groups
 
 You can list all the groups on the OMERO server
 
-    GET     /groups/
+    GET     api/p/groups/
 
 
 **Parameters**
@@ -101,11 +115,22 @@ You can list all the groups on the OMERO server
 **Response**
 
     {
-      data: [
+      groups: [
         {
-          id: 6732,
-          perm: "rwr---",
-          name: "Lab Group"
+          omero:details: {
+            @type: "TBD#Details",
+            permissions: {
+              canDelete: false,
+              perm: "rwr---",
+              canEdit: false,
+              canAnnotate: false,
+              canLink: false,
+              @type: "TBD#Permissions"
+            }
+          },
+          @id: 12,
+          @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#ExperimenterGroup",
+          Name: "Swedlow Lab"
         }
       ]
     }
@@ -116,7 +141,7 @@ List experimenters
 
 You can list all the experimenters on the OMERO server
 
-    GET     /experimenters/
+    GET     api/p/experimenters/
 
 
 **Parameters**
@@ -131,13 +156,27 @@ You can list all the experimenters on the OMERO server
 **Response**
 
     {
-      data: [
+      experimenters: [
         {
-          id: 3829,
-          omeName: "will",
-          firstName: "William",
-          lastName: "Moore",
-          email: "will@dundee.uk"
+          UserName: "ben",
+          FirstName: "Ben",
+          MiddleName: "",
+          omero:details: {
+            @type: "TBD#Details",
+            permissions: {
+              canDelete: false,
+              perm: "rw----",
+              canEdit: false,
+              canAnnotate: false,
+              canLink: false,
+              @type: "TBD#Permissions"
+            }
+          },
+          Email: "newtest2@emaildomain.com",
+          Institution: "",
+          LastName: "Nevis",
+          @id: 4,
+          @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#Experimenter"
         }
       ]
     }
@@ -147,24 +186,16 @@ Get a single experimenter
 -------------------------
 
 
-    GET     /experimenters/:id
+    GET     /api/p/experimenters/:id
 
 
 **Response**
 
-    {
-      data: {
-        id: 3829,
-        omeName: "will",
-        firstName: "William",
-        lastName: "Moore",
-        email: "will@dundee.uk"
-      }
-    }
+    // as above
 
 
 
-image containers
+Image containers
 ================
 
 OMERO organises images in 2 types of many-to-many hierarcies:
@@ -182,7 +213,7 @@ This includes a virtual ``Orphaned images`` container that
 gives the number of orphaned images.
 This is equivalent to the initial display of data in the clients.
 
-    GET    /containers/
+    GET    /api/p/containers/
 
 
 **Parameters**
@@ -213,7 +244,7 @@ This is equivalent to the initial display of data in the clients.
 List projects
 -------------
 
-    GET     /projects/
+    GET     /api/p/projects/
 
 
 **Parameters**
@@ -227,20 +258,29 @@ List projects
 **Response**
 
     {
-      data: [
+      projects: [
         {
-          id: 1101,
-          owner: {
-            id: 4
-          },
-          group: {
-            id: 3
+          @id: 9601,
+          @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#Project",
+          Name: "Recent Data",
+          Description: "Recently created images",
+          childCount: 5008,
+          omero:details: {
+            owner: # see experimenter above,
+            group: # see group above,
+            @type: "TBD#Details",
+            permissions: {
+              canDelete: true,
+              perm: "rwra--",
+              canEdit: true,
+              canAnnotate: true,
+              canLink: true,
+              @type: "TBD#Permissions"
+            }
           }
-          childCount: 4,
-          permissions: {canEdit: true, canAnnotate: true, canLink: true, canDelete: false}
-          name: "Ben's project"
         }
-    ]}
+      ]
+    }
 
 
 Create a project
