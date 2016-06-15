@@ -39,6 +39,25 @@ Pagination
 ----------
 
 Requests that return a number of items will be paginated by default.
+This can be specified using the ```page``` and ```limit``` query
+parameters. See table below.
+
+
+Normalizing Experimenters and Groups
+------------------------------------
+When returning a list of JSON objects that each contain ```omero:details``` with
+```owner``` and ```group``` data, these will typically be nested many times
+within the list. In order to avoid this duplication, we can remove objects from
+within each ```omero:details``` and place them under top-level ```experimenters```
+and ```groups``` lists.
+You can specify this with the ```?normalize=true``` query parameter.
+
+
+Child Counts
+------------
+For container objects such as Projects, Datasets, Screens and Plates it is
+often useful to know the number of children within them. This can be
+specified with ```?childCount=true``` parameter.
 
 
 **Parameters**
@@ -46,9 +65,14 @@ Requests that return a number of items will be paginated by default.
     Name        Type        Description
     ------------------------------------------------------------------
     page        Number      Page number, starting at page=1 (default)
-                            Can use page=0 to disable pagination return all results
-    limit       Number      The size of each page. The default can be set in
+                            Can use page=0 to disable pagination and return all results
+    limit       Number      The size of each page. The default is 200 and can be set by
                             $ bin/omero config set omero.web.page_size 100
+    normalize   Boolean     Place Experimenters and Groups into top-level lists instead
+                            of nesting within objects
+    childCount  Boolean     Use ?childCount=true to include an omero:childCount attribute
+                            for container objects
+
 
 Error handling
 --------------
@@ -60,16 +84,6 @@ Invalid parameters or invalid JSON will result in a ```400 Bad Request```:
 
 Unhandled exceptions are handled with a ```500``` error response that will
 include the error
-
-
-Normalizing Experimenters and Groups
-------------------------------------
-When returning a list of JSON objects that each contain ```omero:details``` with
-```owner``` and ```group``` data, these will typically be nested many times
-within the list. In order to avoid this duplication, we can remove objects from
-within each ```omero:details``` and place them under top-level ```experimenters```
-and ```groups``` lists.
-You can specify this with the ```?normalize=true``` query parameter.
 
 
 Image containers
