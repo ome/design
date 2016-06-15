@@ -3,6 +3,7 @@
  * [API Overview](#api-overview)
     * [Pagination](#pagination)
     * [Error handling](#error-handling)
+    * [Normalizing Experimenters and Groups](#normalizing-experimenters-and-groups)
  * [Image containers](#image-containers)
     * [List all top-level containers](#list-all-top-level-containers)
     * [List projects](#list-projects)
@@ -60,6 +61,15 @@ Invalid parameters or invalid JSON will result in a ```400 Bad Request```:
 Unhandled exceptions are handled with a ```500``` error response that will
 include the error
 
+
+Normalizing Experimenters and Groups
+------------------------------------
+When returning a list of JSON objects that each contain ```omero:details``` with
+```owner``` and ```group``` data, these will typically be nested many times
+within the list. In order to avoid this duplication, we can remove objects from
+within each ```omero:details``` and place them under top-level ```experimenters```
+and ```groups``` lists.
+You can specify this with the ```?normalize=true``` query parameter.
 
 
 Image containers
