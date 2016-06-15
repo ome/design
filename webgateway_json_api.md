@@ -1,9 +1,12 @@
 
 
  * [API Overview](#api-overview)
+    * [Omero-marshal and Projection-based APIs](#omero-marshal-and-projection-based-apis)
+    * [Versioning](#versioning)
     * [Pagination](#pagination)
-    * [Error handling](#error-handling)
     * [Normalizing Experimenters and Groups](#normalizing-experimenters-and-groups)
+    * [Child Counts](#child-counts)
+    * [Error handling](#error-handling)
  * [Image containers](#image-containers)
     * [List all top-level containers](#list-all-top-level-containers)
     * [List projects](#list-projects)
@@ -16,14 +19,18 @@ API Overview
 ============
 
 The OMERO json API described here provides create, read, update and delete
-access to an underlying OMERO server. 
+access to an underlying OMERO server.
+
+
+Omero-marshal and Projection-based APIs
+---------------------------------------
 The majority of the API urls use [omero-marshal](https://github.com/openmicroscopy/omero-marshal)
 to generate json dictionaries from OMERO **model** objects. The json dictionaries will be populated
 with all fields of the OMERO model object, such that changing a single field and sending this
 back to OMERO will update the object accordingly.
 All these url are under the ```m``` prefix:
 
-    <server>/api/m/
+    <server>/webgateway/api/v1.0/m/
 
 
 In addition, a smaller number of API urls perform customised
@@ -32,7 +39,18 @@ typically load a subset of fields for
 OMERO objects in order to improve performance for large data counts.
 These urls are available under the ```p``` prefix:
 
-    <server>/api/p/
+    <server>/webgateway/api/v1.0/p/
+
+
+Versioning
+----------
+The JSON API uses major and minor version numbers to reflect breaking
+and non-breaking changes respectively. Non-breaking changes include simple
+addition of attributes to JSON data or addition of new urls.
+The API version is not strictly tied to the version of OMERO.server.
+The format of JSON returned will also depend on version of omero-marshal
+that is installed.
+Versions are included in the url as shown above.
 
 
 Pagination
@@ -104,7 +122,7 @@ This includes a virtual ``Orphaned images`` container that
 gives the number of orphaned images.
 This is equivalent to the initial display of data in the clients.
 
-    GET    /api/p/containers/
+    GET    /api/m/containers/
 
 
 **Parameters**
@@ -135,7 +153,7 @@ This is equivalent to the initial display of data in the clients.
 List projects
 -------------
 
-    GET     /api/p/projects/
+    GET     /api/m/projects/
 
 
 **Parameters**
