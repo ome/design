@@ -8,7 +8,6 @@
     * [Child Counts](#child-counts)
     * [Error handling](#error-handling)
  * [Image containers](#image-containers)
-    * [List all top-level containers](#list-all-top-level-containers)
     * [List projects](#list-projects)
     * [Create a project](#create-a-project)
     * [Get a single project](#create-a-single-project)
@@ -110,44 +109,9 @@ Image containers
 OMERO organises images in 2 types of many-to-many hierarcies:
 ``screen/plate/[Run]/Well/image`` for HCS data and ``projects/datasets/images``
 for other data. images can also be ``Orphaned`` if not contained within
-a ``Well`` or ``dataset``.
+a ``Well`` or ``Dataset``.
 OMERO also supports ``Shares``, which provide more permissive access 
 to the list of images linked to a Share.
-
-List all top-level containers
------------------------------
-
-List containers that are not children of other containers.
-This includes a virtual ``Orphaned images`` container that
-gives the number of orphaned images.
-This is equivalent to the initial display of data in the clients.
-
-    GET    /api/m/containers/
-
-
-**Parameters**
-
-    Name        Type        Description
-    ------------------------------------------------------------------
-    group       Number      Only return containers from this group
-    owner       Number      Only return containers owned by this user
-
-
-**Response**
-
-    {
-      data: {
-        projects: [],
-        datasets: [],
-        screens: [],
-        plates: [],
-        orphaned: {
-          id: -1,     # currently this is the experimenter_id
-          name: "Orphaned images",
-          childCount: 56
-        }
-      }
-    }
 
 
 List projects
@@ -251,49 +215,4 @@ Delete a project
 **Response**
 
     204   No Content
-
-
-
-
-Urls for listing objects: matrix of query paramters
-===================================================
-
-                    page    limit   owner   group   member    orphaned  project dataset screen  plate   tag     tagset
-    groups          x       x                       x
-    experimenters   x       x               x  
-    containers      x       x       x       x                                                           
-    projects        x       x       x       x                                                           
-    datasets        x       x       x       x                 x         x                              
-    images          x       x       x       x                 x                 x
-    screens         x       x       x       x 
-    plates          x       x       x       x                 x                         x      
-    runs            x       x       x       x                                                   x       
-    tagged          x       x       x                                                                   R
-    tags            x       x       x       x                 x                                                 x  
-    shares          x       x       x               x
-
-
-All parameters are optional except 'R' (required)
-
- - page: Page index for pagination
- - limit: number of objects per page
- - owner: filter objects by owner
- - group: filter objects or experimenters by their group
- - member: filter groups or shares that user belongs to
- - orphaned: only return objects that have no parent container
-
- - images and tagged urls: boolean parameters for getting extra info for images
-    - sizeXYZ: get image sizeX, sizeY & sizeZ
-    - date: get image import 'date' and acquisition date `acqDate`
-    - thumbVersion (not for tagged): get current thumbnail version
-
-
-Other urls
-==========
-
-    links           json: {"dataset":{"10":{"image":[1,2,3]}}}
-    api_tags_and_tagged_list_DELETE  ids
-    paths_to_object  experimenter, project, dataset, image, screen, plate, run/acquisition, well, group
-
-
 
