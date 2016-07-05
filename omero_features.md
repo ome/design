@@ -110,6 +110,12 @@ This example has:
 |Example data|5637              |-1                |0                 |-764567.889    |[-9.0, 12.1, 0.2]|
 
 
+## Versions
+
+This is version `0.2` since an [earlier proposal was called `0.1`](https://github.com/ome/omero-features/blob/249015c0ffa396ae45f06789336ec7cac3f6a9a2/features/OmeroTablesFeatureStore.py#L40).
+OMERO annotations should use the namespace `openmicroscopy.org/omero/features/0.2` for feature files.
+
+
 ## Resources
 
 - https://www.openmicroscopy.org/site/support/omero5/developers/Tables.html
