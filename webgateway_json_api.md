@@ -54,7 +54,6 @@ Versions are included in the url as shown above.
 
 Pagination
 ----------
-
 Requests that return a number of items will be paginated by default.
 This can be specified using the ```page``` and ```limit``` query
 parameters. See table below.
@@ -108,6 +107,98 @@ Invalid parameters or invalid JSON will result in a ```400 Bad Request```:
 
 Unhandled exceptions are handled with a ```500``` error response that will
 include the error
+
+
+Getting Started
+===============
+
+
+List supported versions
+-----------------------
+
+You need to find which versions of the API are supported by your server,
+as described above. These are provided by the base url:
+
+    GET     /webgateway/api/
+
+
+**Response**
+
+    {
+      versions: [
+        {
+          version: "1.0",
+          base_url: "https://<server>/webgateway/api/v1.0/"
+        }
+      ]
+    }
+
+
+List starting urls
+------------------
+
+The base url for the chosen version will list a number of urls for
+logging on and getting started.
+
+    GET     /webgateway/api/v1.0/
+
+
+**Response**
+
+    {
+      login_url: "https://<server>/webgateway/api/v1.0/login/",
+      token_url: "https://<server>/webgateway/api/v1.0/token/",
+      projects_url: "https://<server>/webgateway/api/v1.0/m/projects/",
+      servers_url: "https://<server>/webgateway/api/v1.0/servers/"
+    }
+
+
+List available OMERO servers
+----------------------------
+
+Your API may allow you to connect to several different OMERO servers.
+
+    GET     /webgateway/api/v1.0/servers/
+
+
+**Response**
+
+    {
+      servers: [
+        {
+          host: "nightshade.openmicroscopy.org",
+          server: "omero",
+          id: 1,
+          port: 4064
+        }
+      ]
+    }
+
+
+Get CSRF token
+--------------
+
+In order to prevent CSRF attacks, will need to obtain a CSRF token
+for your session and use it for all subsequent POST, PUT and DELETE
+requests in that session. You can obtain this from the ```csrftoken```
+cookie of any request or from the following request:
+
+    GET     /webgateway/api/v1.0/token/
+
+
+**Response**
+
+    {
+      token: "eNoVq528bOqlhQqbCzKuviODTRX3PUO2"
+    }
+
+
+Login
+-----
+
+    POST    /webgateway/api/v1.0/login/
+
+
 
 
 Image containers
