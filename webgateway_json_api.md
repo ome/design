@@ -77,6 +77,12 @@ often useful to know the number of children within them. This can be
 specified with ```?childCount=true``` parameter.
 
 
+JSON-P Callbacks
+----------------
+To wrap the response in a JSON function, use the callback query parameter
+to specify the name of the function. E.g. ```?callback=foo```.
+
+
 **Parameters**
 
     Name        Type        Description
@@ -89,6 +95,7 @@ specified with ```?childCount=true``` parameter.
                             of nesting within objects
     childCount  Boolean     Use ?childCount=true to include an omero:childCount attribute
                             for container objects
+    callback    String      Name of function to wrap the JSON data
 
 
 Error handling
@@ -206,10 +213,27 @@ Get a single project
     }
 
 
+Update a project
+----------------
+
+    PATCH   /projects/:projectId
+
+
+**Response**
+
+    {
+      data: {
+        "id": 668,
+        "name": "Yeast Mitosis",
+        "description": ""
+      }
+    }
+
+
 Delete a project
 ----------------
 
-    POST  /projects/:projectId
+    DELETE  /projects/:projectId
 
 
 **Response**
