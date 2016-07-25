@@ -237,7 +237,7 @@ Image containers
 
 OMERO organises images in 2 types of many-to-many hierarcies:
 ``screen/plate/[Run]/Well/image`` for HCS data and ``projects/datasets/images``
-for other data. images can also be ``Orphaned`` if not contained within
+for other data. Images can also be ``Orphaned`` if not contained within
 a ``Well`` or ``Dataset``.
 OMERO also supports ``Shares``, which provide more permissive access 
 to the list of images linked to a Share.
@@ -266,10 +266,27 @@ List projects
           @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#Project",
           Name: "Recent Data",
           Description: "Recently created images",
-          childCount: 5008,
           omero:details: {
-            owner: # see experimenter above,
-            group: # see group above,
+            owner: {
+              @id: 3,
+              @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#Experimenter"
+            },
+            group: {
+              omero:details: {
+                @type: "TBD#Details",
+                permissions: {
+                  canDelete: false,
+                  perm: "rwra--",
+                  canEdit: false,
+                  canAnnotate: false,
+                  canLink: true,
+                  @type: "TBD#Permissions"
+                }
+              },
+              @id: 5,
+              @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#ExperimenterGroup",
+              Name: "Nevis Lab"
+            },
             @type: "TBD#Details",
             permissions: {
               canDelete: true,
@@ -302,17 +319,40 @@ Create a project
 
 **Response**
 
-    201 Created
     {
-      data: {
-        id: 8247,
-        name: "My new project",
-        description: "Testing this",
-        owner, {
-          id: 4
+      @id: 9601,
+      @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#Project",
+      Name: "Recent Data",
+      Description: "Recently created images",
+      omero:details: {
+        owner: {
+          @id: 3,
+          @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#Experimenter"
         },
-        group, {
-          id: 3
+        group: {
+          omero:details: {
+            @type: "TBD#Details",
+            permissions: {
+              canDelete: false,
+              perm: "rwra--",
+              canEdit: false,
+              canAnnotate: false,
+              canLink: true,
+              @type: "TBD#Permissions"
+            }
+          },
+          @id: 5,
+          @type: "http://www.openmicroscopy.org/Schemas/OME/2015-01#ExperimenterGroup",
+          Name: "Nevis Lab"
+        },
+        @type: "TBD#Details",
+        permissions: {
+          canDelete: true,
+          perm: "rwra--",
+          canEdit: true,
+          canAnnotate: true,
+          canLink: true,
+          @type: "TBD#Permissions"
         }
       }
     }
@@ -326,13 +366,7 @@ Get a single project
 
 **Response**
 
-    {
-      data: {
-        "id": 668,
-        "name": "Yeast Mitosis",
-        "description": ""
-      }
-    }
+    # As above for Project creation
 
 
 Update a project
@@ -343,13 +377,7 @@ Update a project
 
 **Response**
 
-    {
-      data: {
-        "id": 668,
-        "name": "Yeast Mitosis",
-        "description": ""
-      }
-    }
+    # As above for Project creation
 
 
 Delete a project
@@ -360,5 +388,5 @@ Delete a project
 
 **Response**
 
-    204   No Content
+    # As above for Project creation
 
