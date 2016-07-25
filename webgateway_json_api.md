@@ -196,9 +196,40 @@ cookie of any request or from the following request:
 Login
 -----
 
+You can login to create an OMERO session. You must also include the CSRF token.
+The EventContext for this session will be returned to you.
+
     POST    /webgateway/api/v1.0/login/
 
 
+**Parameters**
+
+    Name        Type        Description
+    ------------------------------------------------------------------
+    server      Number      ID of the server
+    username    String      User's username
+    password    String      User's password
+
+
+**Response**
+
+
+    {
+      eventContext: {
+        userName: "ben",
+        eventId: -1,
+        sessionUuid: "0b30ee4a-c0b2-4b0f-9c61-f48b31bcad8c",
+        eventType: "User",
+        userId: 3,
+        sessionId: 171319,
+        groupName: "Nevis Lab",
+        isAdmin: False,
+        memberOfGroups: [5, 1, 4],
+        leaderOfGroups: [],
+        groupId: 5
+      },
+      success: True
+    }
 
 
 Image containers
@@ -215,7 +246,7 @@ to the list of images linked to a Share.
 List projects
 -------------
 
-    GET     /api/m/projects/
+    GET     /webgateway/api/v1.0/m/projects/
 
 
 **Parameters**
@@ -257,7 +288,7 @@ List projects
 Create a project
 ----------------
 
-    POST    /projects/
+    POST    /webgateway/api/v1.0/m/projects/
 
 
 **Parameters**
@@ -290,7 +321,7 @@ Create a project
 Get a single project
 --------------------
 
-    GET   /projects/:projectId
+    GET   /webgateway/api/v1.0/m/projects/:projectId
 
 
 **Response**
@@ -307,7 +338,7 @@ Get a single project
 Update a project
 ----------------
 
-    PATCH   /projects/:projectId
+    PATCH   /webgateway/api/v1.0/m/projects/:projectId
 
 
 **Response**
@@ -324,7 +355,7 @@ Update a project
 Delete a project
 ----------------
 
-    DELETE  /projects/:projectId
+    DELETE  /webgateway/api/v1.0/m/projects/:projectId
 
 
 **Response**
