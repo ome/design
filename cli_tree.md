@@ -119,3 +119,7 @@ Format the returned objects in a coice of styles, for example obj-spec, YAML, JS
 This part of the specification may also be used in other CLI plugins which output information about omero objects such as `hql`, `import`, etc.
 
     omero tree ls Dataset:1 --output=yml
+
+### Parents and children
+
+Provide commands to list the parents and children of an object. This may be partly covered by `ls` though that is only in the children direction. This might have support level of recursion for viewing more complex family trees. See https://github.com/openmicroscopy/openmicroscopy/pull/4777
