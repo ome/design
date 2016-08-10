@@ -122,4 +122,7 @@ This part of the specification may also be used in other CLI plugins which outpu
 
 ### Parents and children
 
-Provide commands to list the parents and children of an object. This may be partly covered by `ls` though that is only in the children direction. This might have support level of recursion for viewing more complex family trees. See https://github.com/openmicroscopy/openmicroscopy/pull/4777
+Provide commands to list the parents and children of an object.
+This may be partly covered by `ls` though that is only in the children direction.
+This might support some level of recursion for viewing more complex family trees.
+See [parents and children subcommands](https://github.com/openmicroscopy/openmicroscopy/pull/4777)
