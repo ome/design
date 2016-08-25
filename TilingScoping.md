@@ -1,5 +1,4 @@
 #	**Bio-Formats 5.3 Scoping - Tiling**
----
 This document is designed to provide an initial evaluation of the current tiling options within Bio-Formats 5.2 and act as a starting point for discussion on solutions for Bio-Formats 5.3
 
 ## **Current scenario**
@@ -135,10 +134,11 @@ As the writing of tiles is only supported by a subset of our writers I would sug
 ### **New TiledWriter Interface**
 For format writers which do support tiling a separate interface to handle the writing of tiles could be implemented by this subset. The functionality from the existing saveBytes would be transferred (and improved to make full use of parameters) to a new saveTile function. Additionally, I would suggest adding new functions to retrieve suitable height and width (similar to the reader API) for supported format writers.
 
-TileWriter
-`+void saveTile(int no, byte[] buf, int x, int y, int w, int h)`
-`+int getOptimalTileHeight()`
-`+int getOptimalTileWidth()`
+| TileWriter                                                       |
+|------------------------------------------------------------------|
+| `+void saveTile(int no, byte[] buf, int x, int y, int w, int h)` |
+| `+int getOptimalTileHeight()`                                    |
+| `+int getOptimalTileWidth()`                                     |
 
 Documentation would be required to demonstrate the new tiling interface
 
