@@ -136,9 +136,8 @@ For format writers which do support tiling a separate interface to handle the wr
 
 | TileWriter                                                       |
 |------------------------------------------------------------------|
-| `+void saveTile(int no, byte[] buf, int x, int y, int w, int h)` |
-| `+int getOptimalTileHeight()`                                    |
-| `+int getOptimalTileWidth()`                                     |
+|                                                                  |
+| `+void saveTile(int no, byte[] buf, int x, int y, int w, int h)` <br/> `+int getOptimalTileHeight()` <br/> `+int getOptimalTileWidth()`|
 
 Documentation would be required to demonstrate the new tiling interface
 
