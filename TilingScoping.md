@@ -1,8 +1,8 @@
-#	**Bio-Formats 5.3 Scoping - Tiling	**
+#	**Bio-Formats 5.3 Scoping - Tiling**
 ---
 This document is designed to provide an initial evaluation of the current tiling options within Bio-Formats 5.2 and act as a starting point for discussion on solutions for Bio-Formats 5.3
 
-## **Current scenario	**
+## **Current scenario**
 A full breakdown of the current status of tiling implementation in each reader and writer can be found here:  [Bio-Formats 5.2 Tiling Status](https://docs.google.com/spreadsheets/d/1UiFx2n5NBCuIj4KA4Gylm4SZ-ZRfNFUOQYo-klixUmU/edit#gid=0)
 
 ### **API**
@@ -67,24 +67,24 @@ The option for stitching is provided through the Import Dialog. If selected then
 ## **Summary of Existing Limitations**
 
 ### **Positives:**
-The current functionality provides strong support for the reading of tiles.
-We also a suitable wrapper for the stitching of existing tiles, although this is currently only used by the ImageJ plugin it could be leveraged or better documented elsewhere.
+- The current functionality provides strong support for the reading of tiles.
+- We also a suitable wrapper for the stitching of existing tiles, although this is currently only used by the ImageJ plugin it could be leveraged or better documented elsewhere.
 
 ### **Issues:**
-As each reader and writer implements the functions used for tiling, it gives the impression to the user that tiling will be supported for all formats and with any provided parameters.
-No documentation or functionality is available to inform a user which formats support tiling and which do not.
-No documentation is provided to explain how a user can find suitable tile sizes.
+- As each reader and writer implements the functions used for tiling, it gives the impression to the user that tiling will be supported for all formats and with any provided parameters.
+- No documentation or functionality is available to inform a user which formats support tiling and which do not.
+- No documentation is provided to explain how a user can find suitable tile sizes.
 
 ### **Limitations:**
-Very few of the writers support a complete tiling implementation.
-Though our readers support the reading of tiles a large number of them do so by reading the entire plane and performing an array copy, thus negating a lot of the benefit of tiling and in fact making it much more resource intensive if calling the function multiple times.
-Many of the writers also need to write a full blank plane first before writing a tile.
+- Very few of the writers support a complete tiling implementation.
+- Though our readers support the reading of tiles a large number of them do so by reading the entire plane and performing an array copy, thus negating a lot of the benefit of tiling and in fact making it much more resource intensive if calling the function multiple times.
+- Many of the writers also need to write a full blank plane first before writing a tile.
 
 ### **Improvements:**
-The getOptimalWidth and Height functions are only really supported through readers implementing MinimalTiffReader, the functionality is also poorly documented. This could be rolled out further and should be included in any documentation.
-Some of the writers support partial tiling, ie writing of smaller regions but requiring them to be written in the correct order. If this is a limitation of the format then it should be better documented and feedback should be provided to the users.
-Others will require certain parameters for width and height to be used without any way for the user to discover this information. The existing getOptimalWidth and Height functions could be used a basis for providing this information.
-Other writers will ignore the user provided parameters to use hard coded settings. 
+- The getOptimalWidth and Height functions are only really supported through readers implementing MinimalTiffReader, the functionality is also poorly documented. This could be rolled out further and should be included in any documentation.
+- Some of the writers support partial tiling, ie writing of smaller regions but requiring them to be written in the correct order. If this is a limitation of the format then it should be better documented and feedback should be provided to the users.
+- Others will require certain parameters for width and height to be used without any way for the user to discover this information. The existing getOptimalWidth and Height functions could be used a basis for providing this information.
+- Other writers will ignore the user provided parameters to use hard coded settings. 
 
 
 ## **Possible Solutions**
