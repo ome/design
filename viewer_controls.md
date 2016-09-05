@@ -42,10 +42,13 @@ enabled flag of the save button.
   * Min/Max: Set the start/end values of the intensity interval to the global min/max.
   global min/max are calculated at import if ``calculate stats`` is on.
   * Full Range: Set the start/end values of the intensity interval to the min/max values of the pixels interval e.g. 0 to 65535 for 16 bit pixels type.
-  * Imported: Set the start/end values of the intensity interval to the imported values
+  * Imported: This will request new rendering settings. This means that z/t, color, pixels intensity values will be changed, the mapping family used for each channel. All settings need to be re-initialized.
 
+### Users settings
 
-## Others users rendering settings
+ In this area, thumbnails generated using the last settings saved by the users who viewed the image are displayed.
+ In the current implementation, there is one thumbnail per user. A string composed of the first name and last name of the user who viewed the image is displayed under the thumbnail.
+ When the thumbnail is selected, all the settings are re-initialized.
 
 ## Histogram
 
