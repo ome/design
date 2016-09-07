@@ -71,5 +71,4 @@ Describe how the UI components are updated when the selection changes.
    * The same applies when the fields are selected
  * Color/lut and histogram update:
     * if the histogram corresponding to the channel is displayed. The color of the histogram is updated.
-	* it is not updated if the histogram is not displayed. (Not correct)
 
