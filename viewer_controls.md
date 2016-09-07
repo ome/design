@@ -50,6 +50,13 @@ enabled flag of the save button.
  In the current implementation, there is one thumbnail per user. A string composed of the first name and last name of the user who viewed the image is displayed under the thumbnail.
  When the thumbnail is selected, all the settings are re-initialized.
 
+### Useful links to see interactions:
+
+ * [metadata_preview.html](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webclient/templates/webclient/annotations/metadata_preview.html>)
+ * [ome.viewport.js](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/static/webgateway/js/ome.viewport.js>)
+ * [omero_image.js](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/static/webgateway/js/omero_image.js>)
+
+
 ## Histogram
 
 Describe how the UI components are updated when the selection changes.
