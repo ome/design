@@ -39,9 +39,9 @@ enabled flag of the save button.
 
 #### Controls for all channels
 
-  * **Min/Max**: Set the start/end values of the intensity interval to the global min/max.
-  global min/max are calculated at import if ``calculate stats`` is on.
-  * **Full Range**: Set the start/end values of the intensity interval to the min/max values of the pixels interval e.g. 0 to 65535 for 16 bit pixels type.
+  * **Min/Max**: Set the start/end values of the intensity interval to the global min/max. Note that if the
+  global min/max are not calculated at import, then the default values are currently set to ``0`` and ``1`` by the rendering engine.
+  * **Full Range**: Set the start/end values of the intensity interval to the min/max values of the pixels interval e.g. ``0`` and ``65535`` for 16 bit pixels type.
   * **Imported**: This will request new rendering settings. This means that z/t, color, pixels intensity values will be changed, the mapping family used for each channel. All settings need to be re-initialized.
 
 ### Users settings
