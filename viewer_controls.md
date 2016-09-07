@@ -7,9 +7,6 @@ GUI Location:
 Main window - Right Hand Pane - Preview Tab
 Full Image Viewer - Rendering Settings Panel
 
-
-### Rendering controls
-
 ### General controls
 
 **Format:**
