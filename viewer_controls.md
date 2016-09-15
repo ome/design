@@ -26,6 +26,8 @@ Control
  - check against settings prior to action
 - Action
  - saves settings for current image and current user
+ - trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnail
+   on left-hand side need to be updated
 
 **Save to All**
 - Disabled 
@@ -35,7 +37,10 @@ Control
 - At Event
  - check against settings prior to action
 - Action
- - saves settings for current image and current user to all images in dataset
+ - saves settings for current image and current user to all selected images or all the images
+  in the left-hand side e.g. images in dataset
+- trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnails
+   on left-hand side need to be updated
 
 **Undo**
 - Disabled
