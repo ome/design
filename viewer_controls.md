@@ -38,9 +38,10 @@ Control
  - check against settings prior to action
 - Action
  - saves settings for current image and current user to all selected images or all the images
-  in the left-hand side e.g. images in dataset
+  in the left-hand side e.g. images in dataset. This method will use ``applySettingsToSet``
+  see ``components/tools/OmeroWeb/omeroweb/webgateway/views.py``
 - trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnails
-   on left-hand side need to be updated
+   on left-hand side need to be updated.
 
 **Undo**
 - Disabled
