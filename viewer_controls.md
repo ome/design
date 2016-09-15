@@ -20,7 +20,7 @@ Control
  - default 
  - user permissions exclude action
 - Enabled
- - user permissions allow
+ - user permissions allow. This should be checked using ``canAnnotate`` on the image.
  - when the settings have been changed
 - At Event
  - check against settings prior to action
@@ -31,15 +31,15 @@ Control
 
 **Save to All**
 - Disabled 
- - user permissions exclude action
+ - user permissions exclude action.
 - Enabled
- - default - if user permissions allow
+ - default - if user permissions allow. This should be checked using ``canAnnotate`` on the image.
 - At Event
  - check against settings prior to action
 - Action
  - saves settings for current image and current user to all selected images or all the images
   in the left-hand side e.g. images in dataset. This method will use the ``applySettingsToSet``
-  method.
+  method. see [view.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
 - trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnails
    on left-hand side need to be updated.
 
