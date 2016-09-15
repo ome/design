@@ -25,7 +25,8 @@ Control
 - At Event
  - check against settings prior to action
 - Action
- - saves settings for current image and current user
+ - saves settings for current image and current user. If a lut is selected, the name of the 
+ lut will be saved e.g. ``cool.lut``
  - trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnail
    on left-hand side need to be updated
 
@@ -127,6 +128,11 @@ For all:
 
 #### Color picker dialog
 
+**LUT loading**
+Lut are loaded using the method ``listLuts_json``
+see [views.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
+Currently the icon associated to a lut is determined using a pre-build image. (To be modified)
+
 **Toolbar button - color wheel**
 - Action
  - changes selector pane to color wheel selector
@@ -214,7 +220,7 @@ For all:
  - trigger a modification of the enabled flag of the Save button
  - trigger a modification of the enabled flag of the Undo button
 - Note
- - global min/max are calculated at import if ``calculate stats`` is on
+ - global min/max are calculated at import if ``calculate stats`` is on. The default values are 0 and 1.
 
 **Full Range button**
 - Action
