@@ -127,17 +127,17 @@ For all:
 
 #### Color picker dialog
 
-**Toolbar button - colour wheel**
+**Toolbar button - color wheel**
 - Action
- - changes selector pane to colour wheel selector
+ - changes selector pane to color wheel selector
 
  **Toolbar button - rgb**
 - Action
  - changes selector pane to rgb selector
 
- **Toolbar button - default colour picker button**
+ **Toolbar button - default color picker button**
 - Action
- - changes selector pane to default colour picker selector
+ - changes selector pane to default color picker selector
 
 **Color/lut selection**
 - Default value
