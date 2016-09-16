@@ -9,40 +9,54 @@ Full Image Viewer - Rendering Settings Panel
 
 ### General controls
 
+---
+
 **Format:**
 
-Control
+**Set-up:** ...
+
+**Control**
 - State
   - Condition
+  	- Clarification
+- Implementation
+
+---
+
 
 **Save**
 - Disabled
  - default 
  - user permissions exclude action
 - Enabled
- - user permissions allow. This should be checked using ``canAnnotate`` on the image.
+ - user permissions allow
+   - this should be checked using ``canAnnotate`` on the image
  - when the settings have been changed
 - At Event
  - check against settings prior to action
 - Action
- - saves settings for current image and current user. If a lut is selected, the name of the 
- lut will be saved e.g. ``cool.lut``
- - trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnail
-   on left-hand side need to be updated
+ - saves settings for current image and current user
+   - if a lut is selected, the name of the lut will be saved e.g. ``cool.lut``
+ - trigger a "update thumbnail" event - needs to update
+   - thumbnail under User Settings
+    - thumbnail on left-hand side
 
 **Save to All**
 - Disabled 
  - user permissions exclude action.
 - Enabled
- - default - if user permissions allow. This should be checked using ``canAnnotate`` on the image.
+ - user permissions allow
+   - this should be checked using ``canAnnotate`` on the image
 - At Event
  - check against settings prior to action
 - Action
  - saves settings for current image and current user to all selected images or all the images
-  in the left-hand side e.g. images in dataset. This method will use the ``applySettingsToSet``
+  in the left-hand side e.g. images in dataset
+   - this method will use the ``applySettingsToSet``
   method. see [view.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
-- trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnails
-   on left-hand side need to be updated.
+ - trigger a "update thumbnail" event - needs to update
+   - thumbnail under User Settings
+    - thumbnail on left-hand side
 
 **Undo**
 - Disabled
@@ -128,10 +142,9 @@ For all:
 
 #### Color picker dialog
 
-**LUT loading**
-Lut are loaded using the method ``listLuts_json``
-see [views.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
-Currently the icon associated to a lut is determined using a pre-build image. (To be modified)
+**Set-up: LUT loading**
+- lut are loaded using the method ``listLuts_json`` see [views.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
+- currently the icon associated to a lut is determined using a pre-build image. (To be modified)
 
 **Toolbar button - color wheel**
 - Action
