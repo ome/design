@@ -20,22 +20,29 @@ Control
  - default 
  - user permissions exclude action
 - Enabled
- - user permissions allow
+ - user permissions allow. This should be checked using ``canAnnotate`` on the image.
  - when the settings have been changed
 - At Event
  - check against settings prior to action
 - Action
- - saves settings for current image and current user
+ - saves settings for current image and current user. If a lut is selected, the name of the 
+ lut will be saved e.g. ``cool.lut``
+ - trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnail
+   on left-hand side need to be updated
 
 **Save to All**
 - Disabled 
- - user permissions exclude action
+ - user permissions exclude action.
 - Enabled
- - default - if user permissions allow
+ - default - if user permissions allow. This should be checked using ``canAnnotate`` on the image.
 - At Event
  - check against settings prior to action
 - Action
- - saves settings for current image and current user to all images in dataset
+ - saves settings for current image and current user to all selected images or all the images
+  in the left-hand side e.g. images in dataset. This method will use the ``applySettingsToSet``
+  method. see [view.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
+- trigger a "update thumbnail" event i.e. update thumbnail under User setings and thumbnails
+   on left-hand side need to be updated.
 
 **Undo**
 - Disabled
@@ -121,17 +128,22 @@ For all:
 
 #### Color picker dialog
 
-**Toolbar button - colour wheel**
+**LUT loading**
+Lut are loaded using the method ``listLuts_json``
+see [views.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
+Currently the icon associated to a lut is determined using a pre-build image. (To be modified)
+
+**Toolbar button - color wheel**
 - Action
- - changes selector pane to colour wheel selector
+ - changes selector pane to color wheel selector
 
  **Toolbar button - rgb**
 - Action
  - changes selector pane to rgb selector
 
- **Toolbar button - default colour picker button**
+ **Toolbar button - default color picker button**
 - Action
- - changes selector pane to default colour picker selector
+ - changes selector pane to default color picker selector
 
 **Color/lut selection**
 - Default value
@@ -208,7 +220,7 @@ For all:
  - trigger a modification of the enabled flag of the Save button
  - trigger a modification of the enabled flag of the Undo button
 - Note
- - global min/max are calculated at import if ``calculate stats`` is on
+ - global min/max are calculated at import if ``calculate stats`` is on. The default values are 0 and 1.
 
 **Full Range button**
 - Action
