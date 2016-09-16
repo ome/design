@@ -52,7 +52,7 @@ Full Image Viewer - Rendering Settings Panel
 - Action
  - saves settings for current image and current user to all selected images or all the images
   in the left-hand side e.g. images in dataset
-   - this method will use the ``applySettingsToSet``
+    - this method will use the ``applySettingsToSet``
   method. see [view.py](<https://github.com/openmicroscopy/openmicroscopy/blob/develop/components/tools/OmeroWeb/omeroweb/webgateway/views.py>)
  - trigger a "update thumbnail" event - needs to update
    - thumbnail under User Settings
