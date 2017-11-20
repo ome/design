@@ -38,17 +38,17 @@ specified in a text file:
 
 [T | String | (see below)]
 
-[X/X_From | Integer | 0,1,...] 
+[X/X_From | Integer | 0/1/...] 
 
-[Y/Y_From | Integer | 0,1,...] 
+[Y/Y_From | Integer | 0/1/...] 
 
-[Width/RadiusX/X_To | Integer | 0,1,...] 
+[Width/RadiusX/X_To | Integer | 0/1/...] 
 
-[Height/RadiusY/Y_To| Integer | 0,1,...]
+[Height/RadiusY/Y_To| Integer | 0/1/...]
 
-[X_n | Integer | 0,1,...] 
+[X_n | Integer | 0/1/...] (for polygons)
 
-[Y_n | Integer | 0,1,...] 
+[Y_n | Integer | 0/1/...] (for polygons)
 
 ...
 
