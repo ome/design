@@ -34,9 +34,9 @@ specified in a text file:
 ## Shape specification
 [Shape | String | Ellipse/Line/Point/Polygon/Rectangle]
 
-[Z | Integer | 0,1,...]
+[Z | String | (see below)]
 
-[T | Integer | 0,1,...]
+[T | String | (see below)]
 
 [X/X_From | Integer | 0,1,...] 
 
@@ -52,21 +52,29 @@ specified in a text file:
 
 ...
 
+### Z/T plane(s) specification
+
+For specific Z/T planes: Comma separated list of Integers.
+
+For a range of Z/T planes: Two Integers, dash separated [From]-[To] , where
+[From] and [To] can be empty (in which case [From] will be 0, and [To] will
+be the maximum Z/T plane)
+
 
 On one line with space delimited fields and in case of a batch file, one shape per line.
 
 
-Examples (all z=0, t=0):
+Examples:
 
-Circle ROI with center (100,100) to radius 10: 'Ellipse 0 0 100 100 10 10'
+Circle ROI with center (100,100) to radius 10, on z/t plane 0/0: 'Ellipse 0 0 100 100 10 10'
 
-Line ROI from Point (0,0) to (100, 100): 'Line 0 0 10 10 100 100'
+Line ROI from Point (0,0) to (100, 100) on z planes 5-10 and t plane 5: 'Line 5-10 5 10 10 100 100'
 
-Point ROI at (10,10): 'Point 0 0 10 10'
+Point ROI at (10,10) on z plane 10 to max and t plane 0-10: 'Point 10- -10 10 10'
 
-Polygon ROI with Point (10,10), (20,20) and (30,30): 'Polygon 0 0 10 10 20 20 30 30'
+Polygon ROI with Point (10,10), (20,20) and (30,30) on all z/t planes: 'Polygon - - 10 10 20 20 30 30'
 
-Rectangle ROI at (10,10) with width and height 5: 'Point 0 0 10 10 5 5'
+Rectangle ROI at (10,10) with width and height 5, on first two z/t planes: 'Point 0,1 0,1 10 10 5 5'
 
 
 ## Output specification for `add` command
