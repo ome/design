@@ -12,4 +12,5 @@ for more details.
 - [OME003: OMERO component Ansible roles](OME003/)
 - [OME004: Bio-Formats 5.3 Scoping - Tiling](OME004/)
 - [OME005: TIFF and OME-TIFF sub-resolution support](OME005/)
+- [OME006: ROI drawing controls](OME005/)
 
