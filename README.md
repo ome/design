@@ -7,6 +7,7 @@ for more details.
 
 ## Existing proposals
 
+- [OME000: Template](OME000/)
 - [OME001: CLI graph/tree handling](OME001/)
 - [OME002: Feature Storage in OMERO](OME002/)
 - [OME003: OMERO component Ansible roles](OME003/)
