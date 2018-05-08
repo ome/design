@@ -333,3 +333,25 @@ required.  With the corresponding reader support, this would provide
 transparent support for reading, writing, and conversion of data files
 containing sub-resolution data.
 
+## Sample files
+
+Simple scripts to convert existing file formats with sub-resolutions to
+TIFF and OME-TIFF files with SUBIFDS have been created for testing
+purposes:
+
+- [makepyramid-ndpi](makepyramid-ndpi)
+- [makepyramid-scn](makepyramid-scn)
+- [makepyramid-svs](makepyramid-svs)
+
+Of the three, `makepyramid-scn` generates the most compliant OME-TIFF
+files with the best tile sizes and compression types.  These will be
+used to test the TIFF and OME-TIFF support for sub-resolutions in
+Bio-Formats and OME Files prior to the creation of a writer which can
+generate the files directly.
+
+Note that the scripts require a copy of Bio-Formats `showinf`
+on the `PATH`.   They also require a copy of libtiff on
+`LD_LIBRARY_PATH` and `tiffinfo` and `tiffset` on the `PATH`. libtiff
+must be a release > 4.0.9 for BigTIFF SUBIFDS support in `tiffset`;
+at the time of writing this means building a copy from git.
+
