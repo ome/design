@@ -1,0 +1,173 @@
+#!/bin/bash
+
+set -e
+set -x
+
+# Check if file is BigTIFF
+# $1 file
+bigtiff() {
+    if [ "0000000 4949 002b" != "$(dd if="$1" iflag=count_bytes count=4 | od -x | head -n1)" ]; then
+        return 1
+    fi
+    return 0
+}
+
+# Get fieldoffset for TIFF
+# $1 file
+fieldoffset() {
+    if bigtiff "$1"; then
+        echo 8
+    else
+        echo 2
+    fi
+}
+
+# Get fieldsize for TIFF
+# $1 file
+fieldsize() {
+    if bigtiff "$1"; then
+        echo 20
+    else
+        echo 12
+    fi
+}
+
+# Get IFD offsets
+# $1=IFD number
+# $2=file
+diroffsets() {
+    tiffinfo "$dest" | grep "TIFF Directory at offset" | sed -e 's;.*(\(.*\))$;\1;'
+}
+
+# Get offset for IFD
+# $1=IFD number
+# $2=file
+diroffset() {
+    diroffsets "$2" | head -n$(($1 + 1)) | tail -n1
+}
+
+# Get number of tags in directory
+# $1=IFD offset
+# $2=file
+ntags() {
+    echo "od -j $1 -N 2 -d \"$2\"" >&2
+  od -j $1 -N 2 -d "$2" | head -n1 | sed -e 's;^[0-9]* *\(.*\);\1;'
+}
+
+# Offset of next pointer in IFD
+# $1=IFD offset
+# $2=file
+nextoffset() {
+    echo "$(($1 + $(fieldoffset "$2") + ($(ntags $1 "$2") * $(fieldsize "$2"))))"
+}
+
+# Write uint64 little endian value to binary file
+# $1=value
+# $2=destination file
+# $3=offset in file
+update_uint64_le() {
+    if bigtiff "$2"; then
+        printf "$(printf %.16x $1 | sed -e 's;\(..\)\(..\)\(..\)\(..\)\(..\)\(..\)\(..\)\(..\);\8\7\6\5\4\3\2\1;' | sed -e 's;\(..\);\\x\1;g')" | dd of="$2" conv=notrunc,nocreat oflag=seek_bytes seek=$3
+    else
+        printf "$(printf %.8x $1 | sed -e 's;\(..\)\(..\)\(..\)\(..\);\4\3\2\1;' | sed -e 's;\(..\);\\x\1;g')" | dd of="$2" conv=notrunc,nocreat oflag=seek_bytes seek=$3
+    fi
+}
+
+makeuuid() {
+    echo "urn:uuid:$(uuidgen)"
+}
+
+src="orig/77917.svs orig/77928.svs"
+mkdir -p new
+
+for srcfile in $src; do
+    base="$(basename $srcfile)"
+    dest="new/${base%.svs}-subifds.tiff"
+
+    cp "$srcfile" "$dest"
+
+    nifds=$(tiffinfo "$dest" | grep "TIFF Directory at offset" | wc -l)
+    echo "IFD count: $nifds"
+
+    ifds=$(seq 0 $(($nifds - 1)))
+    mainifd=$(echo "$ifds" | head -n1)
+    otherifds=$(echo "$ifds" | tail -n2)
+    subifds=$(echo "$ifds" | head -n$((nifds-2)) | tail -n$((nifds-3)))
+    nsubifds=$(echo "$subifds" | wc -l)
+    echo "IFDs: $ifds"
+    echo "Main IFDs: $mainifd"
+    echo "Other IFDs: $otherifds"
+    echo "SUBIFDs: $subifds"
+
+    # Main header
+    tiffset -d 0 -s 270 "OME Pyramid TIFF test (from $base)" "$dest"
+    tiffset -d 0 -s 305 "A gnarly shell script (makepyramid-svs)" "$dest"
+    tiffset -d 0 -s 315 "Roger Leigh <rleigh@dundee.ac.uk>" "$dest"
+
+    # NewSubFileType
+    for ifd in $mainifd $otherifds; do
+        tiffset -d $ifd -s 254 0 "$dest"
+    done
+    for ifd in $subifds; do
+        tiffset -d $ifd -s 254 1 "$dest"
+    done
+
+    # SubIFDs
+    subifds_diroffs=$(echo $(tiffinfo "$dest" | grep "TIFF Directory at offset" | sed -e 's;.*(\(.*\))$;\1;' | head -n$((nifds-2)) | tail -n$((nifds-3))))
+    echo "SubIFDs for series 0: $subifds_diroffs"
+    tiffset -d 0 -s 330 $nsubifds $subifds_diroffs "$dest"
+    subifds_diroffs=$(echo $(tiffinfo "$dest" | grep "TIFF Directory at offset" | sed -e 's;.*(\(.*\))$;\1;' | head -n$((nifds-2)) | tail -n$((nifds-3))))
+    echo "Updated SubIFDs for series 0: $subifds_diroffs"
+
+    echo "New directories:"
+    diroffsets "$dest"
+
+    dest2="${dest%.tiff}-flat.tiff"
+    cp "$dest" "$dest2"
+
+    # Relink IFDs to elide SubIFDs
+    series0dir="$(diroffset 0 "$dest")"
+    echo "s0dir $series0dir"
+    seriesndir="$(diroffset $(echo "$otherifds" | head -n1) "$dest")"
+    echo "sndir $seriesndir"
+
+    noffset="$(nextoffset $series0dir "$dest")"
+    echo "UPDATE: $series0dir $noffset -> [$seriesndir]"
+    update_uint64_le $seriesndir "$dest" $noffset
+
+    for offset in $subifds_diroffs; do
+        c="$(ntags $offset "$dest")"
+        echo "NTAGS: $c"
+        noffset="$(nextoffset $offset "$dest")"
+        echo "UPDATE: $offset $noffset -> 0"
+        update_uint64_le 0 "$dest" $noffset
+    done
+
+    tiffinfo "$dest"
+
+    # Create OME-XML metadata for the files.
+    dest_ometiff="${dest%.tiff}.ome.tiff"
+    dest2_ometiff="${dest2%.tiff}.ome.tiff"
+    cp "$dest" "$dest_ometiff"
+    cp "$dest2" "$dest2_ometiff"
+
+    bfomexml="$(showinf -nopix -noflat -omexml -omexml-only "$srcfile")"
+
+    # Add TiffData elements.
+    uuid="$(makeuuid)"
+    ome_attr="Creator=\"makepyramid-svs\" UUID=\"${uuid}\""
+    tiffdata_fmt="<TiffData FirstC=\"0\" FirstT=\"0\" FirstZ=\"0\" IFD=\"%d\" PlaneCount=\"1\"><UUID FileName=\"$(basename "${dest_ometiff}")\">${uuid}</UUID></TiffData>"
+    tiffdata_fmt_flat="<TiffData FirstC=\"0\" FirstT=\"0\" FirstZ=\"0\" IFD=\"%d\" PlaneCount=\"1\"><UUID FileName=\"$(basename "${dest2_ometiff}")\">${uuid}</UUID></TiffData>"
+
+    omexml_fmt="$(echo "$bfomexml" | sed -e "s;\(<OME.*\)\(\">\);\1\" ${ome_attr}>;" -e "s;<MetadataOnly\/>;${tiffdata_fmt};")"
+    omexml_fmt_flat="$(echo "$bfomexml" | sed -e "s;\(<OME.*\)\(\">\);\1\" ${ome_attr}>;" -e "s;<MetadataOnly\/>;${tiffdata_fmt_flat};")"
+
+    ifds="0 1 2"
+    omexml="$(printf "$omexml_fmt" $ifds)"
+
+    flatifds="$(echo $mainifd $otherifds)"
+    omexml_flat="$(printf "$omexml_fmt" $flatifds)"
+
+    tiffset -d 0 -s 270 "$omexml" "$dest_ometiff"
+    tiffset -d 0 -s 270 "$omexml_flat" "$dest2_ometiff"
+done
