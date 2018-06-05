@@ -16,6 +16,17 @@ OME-TIFF in Bio-Formats and OME Files, which include:
   pyramids](https://www.openmicroscopy.org/community/viewtopic.php?f=15&t=8433)
   (Damir Sudar)
 
+Alternative existing approaches include:
+
+- [GeoTIFF](http://www.cogeo.org/in-depth.html) and its
+  [specification](https://trac.osgeo.org/gdal/wiki/CloudOptimizedGeoTIFF)
+  (Andrew Brooks)
+- [GeoPackage](http://www.opengeospatial.org/standards/geopackage),
+  images and extra metadata stored in an SQLite database (Andrew
+  Brooks).  While a very interesting concept, and something to
+  investigate in more detail for future work, it's not within the
+  current scope of a TIFF container format.
+
 This proposal will summarise the various possible approaches and their
 tradeoffs, including the practical implementations I have tested while
 evaluating them.
@@ -46,6 +57,11 @@ Cons:
   (`NewSubfileType`) and/or semantics (size comparisons) to
   differentiate which IFD belongs to which series
 - Not compatible with OME-TIFF multi-file structures
+
+GeoTIFF is almost the same as the design shown here, with the
+exception that the sub-resolution level order is reversed, starting
+with the smallest sub-resolution and ending with the full resolution.
+It has the same pros and cons.
 
 ## B. SubIFDs pointing to main IFDs
 
