@@ -495,6 +495,15 @@ to loop over each resolution as well as each series and transfer all
 the resolution levels.  The `imageconverter-noflat` and
 `ometiff-pyramid-writer` branches implement most of the needed logic.
 
+## Outstanding questions
+
+- Do we need to store metadata to describe alignment offsets between
+  sub-resolution levels when the size difference between levels
+  results in pixels not aligned on pixel boundaries, for example with
+  non-power-of-two reductions.  How is this handled by the existing
+  pyramid file formats? (Question from 2018 OME annual meeting in
+  Dundee).
+
 ## Sample files
 
 Simple scripts to convert existing file formats with sub-resolutions to
