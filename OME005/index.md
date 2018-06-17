@@ -448,9 +448,15 @@ compatibility).  The steps to do this are:
   make copying and transfer more direct).
 - Convert all logic in `FormatReader` and all readers to use
   `sizeSubC` in place of `sizeC` (commenting out `sizeC` usage).
+  All RGB channel count usage can get the subchannel count directly;
+  no need to use bad assumptions dividing the image count by
+  `sizeZ * sizeT` etc.; we have the actual correct numbers to hand.
 - Restore `sizeC` and `sizeC` setting, but no `sizeC` getting should
   take place.
 - Deprecate `sizeC` for later removal.
+- Deprecate `imageCount` for later removal; can be computed directly
+  as the sum of `sizeSubC` values.  Comment out as for `sizeC` to
+  eliminate all uses before adding back.
 
 Once the `CoreMetadata` changes are in place, we can create a
 `SubResolutionFormatReader` to contain a `CoreMetadataList` and to
@@ -487,7 +493,9 @@ inherited writer implementation, the only alteration is to `saveBytes`
 to set the correct `SUBIFDS` size when writing out the full resolution
 plane, then writing each resolution sequentially and updating
 `SUBIFDS` accordingly (if `TiffSaver` is made stateful this can be
-automatic).
+automatic).  The writer should set `NEWSUBFILETYPE` appropriately
+to full resolution or reduced-resolution image.  Also or-in PAGE if
+the image is a multi-plane series.
 
 Lastly, update `ImageConverter` to set the resolutions in
 `CoreMetadataList` and use `setResolution` in addition to `setSeries`
