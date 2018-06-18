@@ -342,7 +342,7 @@ Secondly, by setting the core metadata list:
 | IFormatWriter       | Description
 | ------------------- | -------------------------------------------------------
 | setCoreMetadataList | Set the core metadata list (all series and resolutions)
-| getCoreMetadataList | Set the core metadata list (all series and resolutions)
+| getCoreMetadataList | Get the core metadata list (all series and resolutions)
 
 
 | FormatWriter    | Description
@@ -494,7 +494,7 @@ to set the correct `SUBIFDS` size when writing out the full resolution
 plane, then writing each resolution sequentially and updating
 `SUBIFDS` accordingly (if `TiffSaver` is made stateful this can be
 automatic).  The writer should set `NEWSUBFILETYPE` appropriately
-to full resolution or reduced-resolution image.  Also or-in PAGE if
+to full resolution or reduced-resolution image.  Also bitwise OR PAGE if
 the image is a multi-plane series.
 
 Lastly, update `ImageConverter` to set the resolutions in
@@ -510,7 +510,7 @@ the resolution levels.  The `imageconverter-noflat` and
   results in pixels not aligned on pixel boundaries, for example with
   non-power-of-two reductions.  How is this handled by the existing
   pyramid file formats? (Question from 2018 OME annual meeting in
-  Dundee).
+  Dundee.)
 
 ## Sample files
 
