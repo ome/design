@@ -483,7 +483,7 @@ This means it will have to maintain this state:
   needs to stack to cater for `SUBIFDS` containing `SUBIFDS`, i.e. a
   tree structure.
 
-Next, we can make individual readers implement
+Next, we can make individual writers implement
 `SubResolutionFormatWriter`.  Given the small number of writers, I
 would suggest converting the entire lot for ease of maintenance
 (writers don't need to use subresolutions if they implement the
@@ -508,7 +508,7 @@ the resolution levels.  The `imageconverter-noflat` and
 - Do we need to store metadata to describe alignment offsets between
   sub-resolution levels when the size difference between levels
   results in pixels not aligned on pixel boundaries, for example with
-  non-power-of-two reductions.  How is this handled by the existing
+  non-power-of-two reductions? How is this handled by the existing
   pyramid file formats? (Question from 2018 OME annual meeting in
   Dundee.)
 
