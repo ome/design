@@ -214,7 +214,8 @@ This is based largely on Damir Sudar’s suggestions
   Baseline tag `NewSubfileType` must be used to distinguish
   full-resolution images from reduced-size images; the page bit may
   optionally be set when appropriate
-- BigTIFF is recommended for large images, while Baseline TIFF may suffice for smaller images
+- BigTIFF is recommended for large images, while Baseline TIFF may
+  suffice for smaller images
 - With the exception of the above BigTIFF and `SubIFDs` usage, all TIFF
   files with sub-resolutions must be Baseline TIFF-compliant and
   readable with any reader capable of reading Baseline TIFF
@@ -263,22 +264,22 @@ Follow-up work could include:
 
 Implemented only for reading
 
-| IFormatReader
-| -----------------------
-| seriesToCoreIndex
-| coreIndexToSeries
-| setCoreIndex
-| getCoreIndex
-| getResolutionCount
-| setResolution
-| getResolution
-| hasFlattenedResolutions
-| setFlattenedResolutions
+| IFormatReader           | Description
+| ----------------------- | --------------------------------------------------
+| seriesToCoreIndex       | Convert from series (resolution 0) to linear index
+| coreIndexToSeries       | Convert from linear index to series (resolution 0)
+| setCoreIndex            | Set linear index (series and resolution)
+| getCoreIndex            | Get linear index (series and resolution)
+| getResolutionCount      | Get resolution count for current series
+| setResolution           | Set resolution for current series
+| getResolution           | Get resolution for current series
+| hasFlattenedResolutions | True if resolutions are flattened to series
+| setFlattenedResolutions | Enable resolution flattening (before setId)
 
-| FormatReader
-| --------------------
-| resolution
-| flattenedResolutions
+| FormatReader         | Description
+| -------------------- | -----------------------------------------------
+| resolution           | Field storing current resolution level
+| flattenedResolutions | Field storing whether resolutions are flattened
 
 The implementation in `FormatReader` maintains the current resolution
 level for the active series, and whether or not resolutions are
@@ -286,31 +287,80 @@ flattened (which affects the behaviour of the "core index" methods).
 
 ## Proposed sub-resolution writer API additions
 
-| IFormatWriter
-| ------------------
-| setResolutionCount
-| getResolutionCount
-| setResolution
-| getResolution
-
-| FormatWriter
-| ---------------
-| resolutionCount
-| resolution
-
-The "core index" methods and "flattened resolutions" methods are not
-required for writing, because these are specific to the reader
-implementation and the `CoreMetadata` class which the writer interface
-lacks.
-
 The writer implementation needs to keep track of the number of
 resolution levels in the current series, and the current resolution in
 the current series.
 
-| TiffWriter
-| -------------------
-| prepareToWriteImage
-| saveBytes
+The "core index" methods and "flattened resolutions" reader methods
+are not required for writing, because these are specific to the reader
+implementation and the `CoreMetadata` class which the writer interface
+lacks.
+
+The writer will need to be able to set the sub-resolution metadata and
+switch between resolution levels via the writer API.  To set the
+current resolution, similarly to the current series, the following
+additions are required:
+
+| IFormatWriter      | Description
+| ------------------ | ---------------------------------------
+| setResolution      | Set resolution for current series
+| getResolution      | Get resolution for current series
+| getResolutionCount | Get resolution count for current series
+
+| FormatWriter    | Description
+| --------------- | --------------------------------------
+| resolution      | Field storing current resolution level
+
+There are two strategies which could be used to implement setting of
+the sub-resolution metadata.  Firstly, specification of all metadata
+via writer methods to match every reader method:
+
+| IFormatWriter      | Description
+| ------------------ | ------------------------------------------------------------
+| setResolutionCount | Set resolution count for current series
+| setSizeX           | Set size X for current series and resolution
+| setPixelType       | Set pixel type for current series and resolution
+| setInterleaved     | Set interleaved for current series and resolution
+| …                  | Etc. for all series/resolution properties from IFormatReader
+
+| FormatWriter    | Description
+| --------------- | -------------------------------------------------------------------
+| core            | Field for storing core metadata list for all series and resolutions
+
+Here, `setResolutionCount` would add the extra `CoreMetadata` elements
+to describe the extra sub-resolutions for the current series (can be a
+copy of the current series core metadata).  Then, `setSizeX`,
+`setSizeY` and other methods would be used to customise the
+sub-resolution metadata.  The downside of this approach is that the
+metadata needs to be fully specified before `setId` is called, or else
+the internal writer state will be inconsistent.  `setSeries` can't be
+called before `setId`, and so this approach is incompatible with the
+current writer semantics.
+
+Secondly, by setting the core metadata list:
+
+| IFormatWriter       | Description
+| ------------------- | -------------------------------------------------------
+| setCoreMetadataList | Set the core metadata list (all series and resolutions)
+| getCoreMetadataList | Get the core metadata list (all series and resolutions)
+
+
+| FormatWriter    | Description
+| --------------- | -------------------------------------------------------------------
+| resolution      | Field storing current resolution level
+| core            | Field for storing core metadata list for all series and resolutions
+
+This can be done before `setId` and remain compatible with the
+existing writer API.  `setCoreMetadataList` could be used as an
+alternative to `setMetadataRetrieve`, or after `setMetadataRetrieve`
+by calling `getCoreMetadataList` to get the core metadata set from the
+metadata store, and then modifying it before calling
+`setCoreMetadataList`.
+
+| TiffWriter          | Description
+| ------------------- | -----------------------------
+| prepareToWriteImage | Set `SUBIFDS` to correct size
+| saveBytes           | Update SUBIFDS
 
 `prepareToWriteImage` will need to set the `SubIFDs` tag to a size of
 `resolutionCount - 1` if the number of resolutions is greater than 1.
@@ -329,10 +379,10 @@ requiring hardcoding of writer-specific special cases.
 
 ## Proposed sub-resolution reader changes
 
-| MinimalTiffReader
-| -----------------
-| initFile
-| openBytes
+| MinimalTiffReader | Description
+| ----------------- | -----------------------------------------
+| initFile          | Check `SUBIFDS` and set `CoreMetadata`
+| openBytes         | Use current sub-resolution from `SUBIFDS`
 
 `initFile` will check the `SubIFDs` tag, and initialise the CoreMetadata
 with the sub-resolution data.  `openBytes` will read the selected
@@ -348,6 +398,119 @@ level.  Since this uses `SubIFDs`, no metadata model changes would be
 required.  With the corresponding reader support, this would provide
 transparent support for reading, writing, and conversion of data files
 containing sub-resolution data.
+
+## Implementation of writing support
+
+Writing can be broken down into these steps, which can be implemented in order:
+
+- `CoreMetadata` support for subchannel sizes
+- `MetadataTools` support for subchannels in `populatePixels`
+- `FormatWriter` and `IFormatWriter` support
+- `TiffSaver` support
+- `OMETiffWriter` support
+- `bfconvert`/`ImageConverter` support
+
+These steps are partially implemented on several git branches:
+
+| Branch | Description
+| ------ | ---------------
+| [coremetadata-subchannel](https://github.com/rleigh-codelibre/bioformats/tree/coremetadata-subchannel) | Add `sizeSubC[]` subchannel sizes to `CoreMetadata`
+| [format-writer-subresolution](https://github.com/rleigh-codelibre/bioformats/tree/format-writer-subresolution) | Serialise `MetadataRetrieve` to `CoreMetadataList`; add `SubresolutionFormatWriter`
+| [imageconverter-noflat](https://github.com/rleigh-codelibre/bioformats/tree/imageconverter-noflat) | Add `bfconvert` `-noflat` option
+| [ometiff-pyramid-writer](https://github.com/rleigh-codelibre/bioformats/tree/ometiff-pyramid-writer) | More `bfconvert` support and `ISubResolutionFormatWriter`
+
+The rationale for these steps is detailed here.
+
+In order to set `CoreMetadataList` from `MetadataRetrieve`, we need to
+be able to round-trip all needed metadata, including all metadata
+needed for sub-resolutions.  The key defect here is that the OME-XML
+`Channel` class' `SamplesPerPixel` attribute isn't representable in
+`CoreMetadata`.  There's only `sizeC` and `imageCount`.  OME-Files C++
+`CoreMetadata` stores `sizeC` as an array:
+
+```
+/// Number of channels.
+std::vector<dimension_size_type> sizeC;
+```
+
+The size of the vector is the channel count; the size of each element
+is the number of samples for that channel index.  Bio-Formats needs to
+be able to store the same information.  The `coremetadata-subchannel`
+branch is the start of the needed work.  It adds `sizeSubC` as a
+supplement to `sizeC` (leaving `sizeC` present but unused for backward
+compatibility).  The steps to do this are:
+
+- Add `sizeSubC`.
+- Comment out `sizeC`.
+- Add `int getRGBChannelCount(int)` to get the sub-channel count for a
+  given channel index (is compatible with OME Files C++).
+- Add `int[] getRGBChannelCounts` to get all sub-channels directly (to
+  make copying and transfer more direct).
+- Convert all logic in `FormatReader` and all readers to use
+  `sizeSubC` in place of `sizeC` (commenting out `sizeC` usage).
+  All RGB channel count usage can get the subchannel count directly;
+  no need to use bad assumptions dividing the image count by
+  `sizeZ * sizeT` etc.; we have the actual correct numbers to hand.
+- Restore `sizeC` and `sizeC` setting, but no `sizeC` getting should
+  take place.
+- Deprecate `sizeC` for later removal.
+- Deprecate `imageCount` for later removal; can be computed directly
+  as the sum of `sizeSubC` values.  Comment out as for `sizeC` to
+  eliminate all uses before adding back.
+
+Once the `CoreMetadata` changes are in place, we can create a
+`SubResolutionFormatReader` to contain a `CoreMetadataList` and to
+fill it from `MetadataRetrieve` when set, or alternatively from
+`setCoreMetadataList` directly.  At this point, it's possible to
+specify all series and resolutions before `setId`.  This work is begun
+on the `format-writer-subresolution` branch.  The writer
+implementation should strictly enforce correct series, resolution and
+plane progression, to ensure correct ordering in the file being
+written.
+
+The TIFF saving code needs updating to allow saving of sub-resolution
+planes in `SUBIFDS`.  I would suggest updating `TiffSaver` to maintain
+a stack of sub-resolutions and to write them in order like libtiff.
+This means it will have to maintain this state:
+
+- `previous` top-level IFD offset (for updating the next pointer
+  tranparently); currently requires specifying up front, which is
+  buggy and the cause of several bugs, causing invalid TIFFs to be
+  written with `next` pointers to nowhere.
+- `SUBIFDS` offset and size and current SubIFD for current IFD.  This
+  will allow automatic update of the parent `SUBIFDS` IFD offset when
+  the current IFD is written, and for all subsequent `SUBIFDS`.  This
+  needs to stack to cater for `SUBIFDS` containing `SUBIFDS`, i.e. a
+  tree structure.
+
+Next, we can make individual writers implement
+`SubResolutionFormatWriter`.  Given the small number of writers, I
+would suggest converting the entire lot for ease of maintenance
+(writers don't need to use subresolutions if they implement the
+interface).  Then we can update `OMETiffWriter` to write pyramids.
+Given the current series and current resolution information in the
+inherited writer implementation, the only alteration is to `saveBytes`
+to set the correct `SUBIFDS` size when writing out the full resolution
+plane, then writing each resolution sequentially and updating
+`SUBIFDS` accordingly (if `TiffSaver` is made stateful this can be
+automatic).  The writer should set `NEWSUBFILETYPE` appropriately
+to full resolution or reduced-resolution image.  Also bitwise OR PAGE if
+the image is a multi-plane series.
+
+Lastly, update `ImageConverter` to set the resolutions in
+`CoreMetadataList` and use `setResolution` in addition to `setSeries`
+to loop over each resolution as well as each series and transfer all
+the resolution levels.  The `imageconverter-noflat` and
+`ometiff-pyramid-writer` branches implement most of the needed logic.
+
+## Outstanding questions
+
+- Do we need to store metadata to describe alignment offsets between
+  sub-resolution levels when the size difference between levels
+  results in pixels not aligned on pixel boundaries, for example with
+  non-power-of-two reductions? How is this handled by the existing
+  pyramid file formats? (Question from 2018 OME annual meeting in
+  Dundee.)
 
 ## Sample files
 
