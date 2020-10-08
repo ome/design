@@ -1,6 +1,6 @@
 # TIFF and OME-TIFF sub-resolution support
 
-# Introduction
+## Introduction
 
 There have been several different proposals for images at different
 scales in the form of sub-resolutions (image “pyramids”) for TIFF and
@@ -31,6 +31,8 @@ This proposal will summarise the various possible approaches and their
 tradeoffs, including the practical implementations I have tested while
 evaluating them.
 
+## Storage
+
 There are several strategies we could employ for sub-resolutions:
 
 ![Strategies A, B and C](strategy-a-b-c.svg)
@@ -40,7 +42,7 @@ There are several strategies we could employ for sub-resolutions:
 ![Strategy E](strategy-e.svg)
 
 
-## A. Implicit ordering
+### A. Implicit ordering
 
 This is the approach taken by the existing Pyramid TIFF reader
 
@@ -63,7 +65,7 @@ exception that the sub-resolution level order is reversed, starting
 with the smallest sub-resolution and ending with the full resolution.
 It has the same pros and cons.
 
-## B. SubIFDs pointing to main IFDs
+### B. SubIFDs pointing to main IFDs
 
 Intermediate between (A) and (C).  The `SubIFDs` tag is used to indicate that other IFDs are sub-resolutions of this IFD.  The other IFDs are part of the main IFD list, like (A).
 
@@ -78,7 +80,7 @@ Cons:
 - Sub-resolutions are still part of the main IFD list
 - Unlikely to be supported by libtiff
 
-## C. SubIFDs pointing to separate IFDs
+### C. SubIFDs pointing to separate IFDs
 
 This is how sub-resolutions in TIFF are ideally supported.
 
@@ -98,7 +100,7 @@ Cons:
 - Sub-resolutions not visible to software which doesn’t handle `SubIFDs`
 
 
-## D. External metadata with implicit resolution order
+### D. External metadata with implicit resolution order
 
 Similar to (A), but instead of using the `SubIFDs` tag the resolution
 count is specified in the Image OME-XML metadata.
@@ -122,7 +124,7 @@ Cons:
 - Not compatible with OME-TIFF multi-file structures
 - Requires data model changes
 
-## E. External metadata with explicit resolution order
+### E. External metadata with explicit resolution order
 
 Similar to (A), but instead of using the SubIFD tag the
 sub-resolutions IFDs are specified in the Image OME-XML metadata
@@ -205,7 +207,7 @@ the addition of support for strategy E.  Strategy E will require full
 support in the data model for TiffData (or equivalent) elements for
 every resolution level.
 
-# TIFF and OME-TIFF file format changes
+## TIFF and OME-TIFF file format changes
 
 This is based largely on Damir Sudar’s suggestions
 
@@ -258,9 +260,9 @@ Follow-up work could include:
   support in the TIFF container, and could be optional for the simple
   case without reduction in *z*
 
-# Bio-Formats and OME-Files API and implementation changes
+## Bio-Formats and OME-Files API and implementation changes
 
-## Existing sub-resolution API
+### Existing sub-resolution API
 
 Implemented only for reading
 
@@ -285,7 +287,7 @@ The implementation in `FormatReader` maintains the current resolution
 level for the active series, and whether or not resolutions are
 flattened (which affects the behaviour of the "core index" methods).
 
-## Proposed sub-resolution writer API additions
+### Proposed sub-resolution writer API additions
 
 The writer implementation needs to keep track of the number of
 resolution levels in the current series, and the current resolution in
@@ -377,7 +379,7 @@ for clean integration of sub-resolution functionality into tools like
 Keeping it hidden avoid this, but at the cost of accessing it
 requiring hardcoding of writer-specific special cases.
 
-## Proposed sub-resolution reader changes
+### Proposed sub-resolution reader changes
 
 | MinimalTiffReader | Description
 | ----------------- | -----------------------------------------
@@ -399,7 +401,7 @@ required.  With the corresponding reader support, this would provide
 transparent support for reading, writing, and conversion of data files
 containing sub-resolution data.
 
-## Implementation of writing support
+### Implementation of writing support
 
 Writing can be broken down into these steps, which can be implemented in order:
 
@@ -503,7 +505,7 @@ to loop over each resolution as well as each series and transfer all
 the resolution levels.  The `imageconverter-noflat` and
 `ometiff-pyramid-writer` branches implement most of the needed logic.
 
-## Outstanding questions
+### Outstanding questions
 
 - Do we need to store metadata to describe alignment offsets between
   sub-resolution levels when the size difference between levels
@@ -512,7 +514,7 @@ the resolution levels.  The `imageconverter-noflat` and
   pyramid file formats? (Question from 2018 OME annual meeting in
   Dundee.)
 
-## Sample files
+### Sample files
 
 Simple scripts to convert existing file formats with sub-resolutions to
 TIFF and OME-TIFF files with SUBIFDS have been created for testing
