@@ -260,6 +260,38 @@ Follow-up work could include:
   support in the TIFF container, and could be optional for the simple
   case without reduction in *z*
 
+### Outstanding questions
+
+- Do we need to store metadata to describe alignment offsets between
+  sub-resolution levels when the size difference between levels
+  results in pixels not aligned on pixel boundaries, for example with
+  non-power-of-two reductions? How is this handled by the existing
+  pyramid file formats? (Question from 2018 OME annual meeting in
+  Dundee.)
+
+### Sample files
+
+Simple scripts to convert existing file formats with sub-resolutions to
+TIFF and OME-TIFF files with SUBIFDS have been created for testing
+purposes:
+
+- [makepyramid-ndpi](makepyramid-ndpi)
+- [makepyramid-scn](makepyramid-scn)
+- [makepyramid-svs](makepyramid-svs)
+
+Of the three, `makepyramid-scn` generates the most compliant OME-TIFF
+files with the best tile sizes and compression types.  These will be
+used to test the TIFF and OME-TIFF support for sub-resolutions in
+Bio-Formats and OME Files prior to the creation of a writer which can
+generate the files directly.
+
+Note that the scripts require a copy of Bio-Formats `showinf`
+on the `PATH`.   They also require a copy of libtiff on
+`LD_LIBRARY_PATH` and `tiffinfo` and `tiffset` on the `PATH`. libtiff
+must be a release > 4.0.9 for BigTIFF SUBIFDS support in `tiffset`;
+at the time of writing this means building a copy from git.
+
+
 ## Bio-Formats and OME-Files API and implementation changes
 
 ### Existing sub-resolution API
@@ -504,35 +536,4 @@ Lastly, update `ImageConverter` to set the resolutions in
 to loop over each resolution as well as each series and transfer all
 the resolution levels.  The `imageconverter-noflat` and
 `ometiff-pyramid-writer` branches implement most of the needed logic.
-
-### Outstanding questions
-
-- Do we need to store metadata to describe alignment offsets between
-  sub-resolution levels when the size difference between levels
-  results in pixels not aligned on pixel boundaries, for example with
-  non-power-of-two reductions? How is this handled by the existing
-  pyramid file formats? (Question from 2018 OME annual meeting in
-  Dundee.)
-
-### Sample files
-
-Simple scripts to convert existing file formats with sub-resolutions to
-TIFF and OME-TIFF files with SUBIFDS have been created for testing
-purposes:
-
-- [makepyramid-ndpi](makepyramid-ndpi)
-- [makepyramid-scn](makepyramid-scn)
-- [makepyramid-svs](makepyramid-svs)
-
-Of the three, `makepyramid-scn` generates the most compliant OME-TIFF
-files with the best tile sizes and compression types.  These will be
-used to test the TIFF and OME-TIFF support for sub-resolutions in
-Bio-Formats and OME Files prior to the creation of a writer which can
-generate the files directly.
-
-Note that the scripts require a copy of Bio-Formats `showinf`
-on the `PATH`.   They also require a copy of libtiff on
-`LD_LIBRARY_PATH` and `tiffinfo` and `tiffset` on the `PATH`. libtiff
-must be a release > 4.0.9 for BigTIFF SUBIFDS support in `tiffset`;
-at the time of writing this means building a copy from git.
 
