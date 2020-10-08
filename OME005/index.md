@@ -1,5 +1,12 @@
 # OME-TIFF sub-resolution support
 
+## Table of contents
+
+1. [Introduction](#introduction)
+2. [Storage](#storage)
+3. [TIFF and OME-TIFF file format changes](#format)
+3. [Bio-Formats and OME-Files API and implementation changes](#implementation)
+
 ## Introduction
 
 There have been several different proposals for images at different
@@ -220,7 +227,7 @@ the addition of support for strategy E.  Strategy E will require full
 support in the data model for TiffData (or equivalent) elements for
 every resolution level.
 
-## TIFF and OME-TIFF file format changes
+## TIFF and OME-TIFF file format changes <a name="format"></a>
 
 This is based largely on Damir Sudar’s suggestions
 
@@ -311,7 +318,7 @@ for multi-resolution images - see
 https://docs.openmicroscopy.org/ome-model/latest/ome-tiff/specification.html
 and https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
 
-## Bio-Formats and OME-Files API and implementation changes
+## Bio-Formats and OME-Files API and implementation changes <a name="implementation"></a>
 
 ### Existing sub-resolution API
 
