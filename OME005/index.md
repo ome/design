@@ -181,8 +181,9 @@ Multi-file OME-TIFF                   | No*  | Yes      | Yes      | Yes*†    
 
 § Accessible, but without any metadata to indicate the structure
 
+### Resolution
 
-We will implement strategy B or C in the short term.  In the longer
+We will implement strategy C in the short term. In the longer
 term, E would allow *z* reductions (or requiring HDF5 might avoid the
 need for any model changes).
 
@@ -303,6 +304,12 @@ on the `PATH`.   They also require a copy of libtiff on
 must be a release > 4.0.9 for BigTIFF SUBIFDS support in `tiffset`;
 at the time of writing this means building a copy from git.
 
+### Resolution
+
+From ome-model 6.0.0, the OME-TIFF file format specification includes support
+for multi-resolution images - see
+https://docs.openmicroscopy.org/ome-model/latest/ome-tiff/specification.html
+and https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
 
 ## Bio-Formats and OME-Files API and implementation changes
 
@@ -549,3 +556,9 @@ to loop over each resolution as well as each series and transfer all
 the resolution levels.  The `imageconverter-noflat` and
 `ometiff-pyramid-writer` branches implement most of the needed logic.
 
+### Resolution
+
+The release of Bio-Formats 6.0.0 includes support for reading and writing
+multi-resolution OME-TIFF - see 
+https://forum.image.sc/t/release-of-bio-formats-6-0-0/23099 or
+https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
