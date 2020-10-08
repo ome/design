@@ -1,4 +1,4 @@
-# TIFF and OME-TIFF sub-resolution support
+# OME-TIFF sub-resolution support
 
 ## Introduction
 
