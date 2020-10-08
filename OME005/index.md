@@ -16,6 +16,18 @@ OME-TIFF in Bio-Formats and OME Files, which include:
   pyramids](https://www.openmicroscopy.org/community/viewtopic.php?f=15&t=8433)
   (Damir Sudar)
 
+This investigation included the review of existing implementation of pyramids
+in TIFF including published specification, available samples and open
+implementations:
+
+| Format              | Specification                                                        | Reference Implementation     |
+|---------------------|----------------------------------------------------------------------|------------------------------|
+| Adobe Pyramid TIFF  | https://www.loc.gov/preservation/digital/formats/fdd/fdd000237.shtml | private                      |
+| Aperio SVS          | private                                                              | private                      |
+| Leica SCN           | private                                                              | private                      |
+| Tiled Pyramidal TIF | https://iipimage.sourceforge.io/documentation/images/                | http://vips.sourceforge.net/ |
+| ZIF                 | https://zif.photo/                                                   | private (libtiff-based)      |
+
 Alternative existing approaches include:
 
 - [GeoTIFF](http://www.cogeo.org/in-depth.html) and its
