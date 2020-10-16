@@ -29,8 +29,8 @@ and implementations of TIFF-based formats:
 - Adobe Pyramid TIFF ([specification](https://www.loc.gov/preservation/digital/formats/fdd/fdd000237.shtml))
 - Aperio SVS ([specification](https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf), [OpenSlide samples](http://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/))
 - Leica SCN ([OpenSlide samples](http://openslide.cs.cmu.edu/download/openslide-testdata/Leica/))
+- Objective Pathology ZIF ([specification](https://zif.photo/))
 - Tiled Pyramidal TIF ([specification](https://iipimage.sourceforge.io/documentation/images/), [libvips implementation](https://github.com/libvips/libvips))
-- ZIF ([specification](https://zif.photo/))
 
 
 Alternative existing approaches include:
