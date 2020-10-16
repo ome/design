@@ -23,17 +23,15 @@ OME-TIFF in Bio-Formats and OME Files, which include:
   pyramids](https://www.openmicroscopy.org/community/viewtopic.php?f=15&t=8433)
   (Damir Sudar)
 
-This investigation included the review of existing implementation of pyramids
-in TIFF including published specification, available samples and open
-implementations:
+This investigation included the review of existing specifications, samples
+and implementations of TIFF-based formats. In particul:
 
-| Format              | Specification                                                        | Reference Implementation     |
-|---------------------|----------------------------------------------------------------------|------------------------------|
-| Adobe Pyramid TIFF  | https://www.loc.gov/preservation/digital/formats/fdd/fdd000237.shtml | private                      |
-| Aperio SVS          | private                                                              | private                      |
-| Leica SCN           | private                                                              | private                      |
-| Tiled Pyramidal TIF | https://iipimage.sourceforge.io/documentation/images/                | http://vips.sourceforge.net/ |
-| ZIF                 | https://zif.photo/                                                   | private (libtiff-based)      |
+- Adobe Pyramid TIFF ([specification](https://www.loc.gov/preservation/digital/formats/fdd/fdd000237.shtml))
+- Aperio SVS ([specification](https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf), [OpenSlide samples](http://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/))
+- Leica SCN ([OpenSlide samples](http://openslide.cs.cmu.edu/download/openslide-testdata/Leica/))
+- Tiled Pyramidal TIF ([specification](https://iipimage.sourceforge.io/documentation/images/), [libvips implementation](https://github.com/libvips/libvips))
+- ZIF ([specification](https://zif.photo/))
+
 
 Alternative existing approaches include:
 
