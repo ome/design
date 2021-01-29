@@ -1,6 +1,13 @@
-# TIFF and OME-TIFF sub-resolution support
+# OME-TIFF sub-resolution support
 
-# Introduction
+## Table of contents
+
+1. [Introduction](#introduction)
+2. [Storage](#storage)
+3. [TIFF and OME-TIFF file format changes](#format)
+3. [Bio-Formats and OME-Files API and implementation changes](#implementation)
+
+## Introduction
 
 There have been several different proposals for images at different
 scales in the form of sub-resolutions (image “pyramids”) for TIFF and
@@ -15,6 +22,16 @@ OME-TIFF in Bio-Formats and OME Files, which include:
 - [TIFF/OME-TIFF extension to support
   pyramids](https://www.openmicroscopy.org/community/viewtopic.php?f=15&t=8433)
   (Damir Sudar)
+
+This investigation included the review of existing specifications, samples
+and implementations of TIFF-based formats:
+
+- Adobe Pyramid TIFF ([specification](https://www.loc.gov/preservation/digital/formats/fdd/fdd000237.shtml))
+- Aperio SVS ([specification](https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf), [OpenSlide samples](http://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/))
+- Leica SCN ([OpenSlide samples](http://openslide.cs.cmu.edu/download/openslide-testdata/Leica/))
+- Objective Pathology ZIF ([specification](https://zif.photo/))
+- Tiled Pyramidal TIF ([specification](https://iipimage.sourceforge.io/documentation/images/), [libvips implementation](https://github.com/libvips/libvips))
+
 
 Alternative existing approaches include:
 
@@ -31,6 +48,8 @@ This proposal will summarise the various possible approaches and their
 tradeoffs, including the practical implementations I have tested while
 evaluating them.
 
+## Storage
+
 There are several strategies we could employ for sub-resolutions:
 
 ![Strategies A, B and C](strategy-a-b-c.svg)
@@ -40,7 +59,7 @@ There are several strategies we could employ for sub-resolutions:
 ![Strategy E](strategy-e.svg)
 
 
-## A. Implicit ordering
+### A. Implicit ordering
 
 This is the approach taken by the existing Pyramid TIFF reader
 
@@ -63,7 +82,7 @@ exception that the sub-resolution level order is reversed, starting
 with the smallest sub-resolution and ending with the full resolution.
 It has the same pros and cons.
 
-## B. SubIFDs pointing to main IFDs
+### B. SubIFDs pointing to main IFDs
 
 Intermediate between (A) and (C).  The `SubIFDs` tag is used to indicate that other IFDs are sub-resolutions of this IFD.  The other IFDs are part of the main IFD list, like (A).
 
@@ -78,7 +97,7 @@ Cons:
 - Sub-resolutions are still part of the main IFD list
 - Unlikely to be supported by libtiff
 
-## C. SubIFDs pointing to separate IFDs
+### C. SubIFDs pointing to separate IFDs
 
 This is how sub-resolutions in TIFF are ideally supported.
 
@@ -98,7 +117,7 @@ Cons:
 - Sub-resolutions not visible to software which doesn’t handle `SubIFDs`
 
 
-## D. External metadata with implicit resolution order
+### D. External metadata with implicit resolution order
 
 Similar to (A), but instead of using the `SubIFDs` tag the resolution
 count is specified in the Image OME-XML metadata.
@@ -122,7 +141,7 @@ Cons:
 - Not compatible with OME-TIFF multi-file structures
 - Requires data model changes
 
-## E. External metadata with explicit resolution order
+### E. External metadata with explicit resolution order
 
 Similar to (A), but instead of using the SubIFD tag the
 sub-resolutions IFDs are specified in the Image OME-XML metadata
@@ -167,8 +186,9 @@ Multi-file OME-TIFF                   | No*  | Yes      | Yes      | Yes*†    
 
 § Accessible, but without any metadata to indicate the structure
 
+### Resolution
 
-We will implement strategy B or C in the short term.  In the longer
+We will implement strategy C in the short term. In the longer
 term, E would allow *z* reductions (or requiring HDF5 might avoid the
 need for any model changes).
 
@@ -205,7 +225,7 @@ the addition of support for strategy E.  Strategy E will require full
 support in the data model for TiffData (or equivalent) elements for
 every resolution level.
 
-# TIFF and OME-TIFF file format changes
+## TIFF and OME-TIFF file format changes <a name="format"></a>
 
 This is based largely on Damir Sudar’s suggestions
 
@@ -258,9 +278,47 @@ Follow-up work could include:
   support in the TIFF container, and could be optional for the simple
   case without reduction in *z*
 
-# Bio-Formats and OME-Files API and implementation changes
+### Outstanding questions
 
-## Existing sub-resolution API
+- Do we need to store metadata to describe alignment offsets between
+  sub-resolution levels when the size difference between levels
+  results in pixels not aligned on pixel boundaries, for example with
+  non-power-of-two reductions? How is this handled by the existing
+  pyramid file formats? (Question from 2018 OME annual meeting in
+  Dundee.)
+
+### Sample files
+
+Simple scripts to convert existing file formats with sub-resolutions to
+TIFF and OME-TIFF files with SUBIFDS have been created for testing
+purposes:
+
+- [makepyramid-ndpi](makepyramid-ndpi)
+- [makepyramid-scn](makepyramid-scn)
+- [makepyramid-svs](makepyramid-svs)
+
+Of the three, `makepyramid-scn` generates the most compliant OME-TIFF
+files with the best tile sizes and compression types.  These will be
+used to test the TIFF and OME-TIFF support for sub-resolutions in
+Bio-Formats and OME Files prior to the creation of a writer which can
+generate the files directly.
+
+Note that the scripts require a copy of Bio-Formats `showinf`
+on the `PATH`.   They also require a copy of libtiff on
+`LD_LIBRARY_PATH` and `tiffinfo` and `tiffset` on the `PATH`. libtiff
+must be a release > 4.0.9 for BigTIFF SUBIFDS support in `tiffset`;
+at the time of writing this means building a copy from git.
+
+### Resolution
+
+From ome-model 6.0.0, the OME-TIFF file format specification includes support
+for multi-resolution images - see
+https://docs.openmicroscopy.org/ome-model/latest/ome-tiff/specification.html
+and https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
+
+## Bio-Formats and OME-Files API and implementation changes <a name="implementation"></a>
+
+### Existing sub-resolution API
 
 Implemented only for reading
 
@@ -285,7 +343,7 @@ The implementation in `FormatReader` maintains the current resolution
 level for the active series, and whether or not resolutions are
 flattened (which affects the behaviour of the "core index" methods).
 
-## Proposed sub-resolution writer API additions
+### Proposed sub-resolution writer API additions
 
 The writer implementation needs to keep track of the number of
 resolution levels in the current series, and the current resolution in
@@ -377,7 +435,7 @@ for clean integration of sub-resolution functionality into tools like
 Keeping it hidden avoid this, but at the cost of accessing it
 requiring hardcoding of writer-specific special cases.
 
-## Proposed sub-resolution reader changes
+### Proposed sub-resolution reader changes
 
 | MinimalTiffReader | Description
 | ----------------- | -----------------------------------------
@@ -399,7 +457,7 @@ required.  With the corresponding reader support, this would provide
 transparent support for reading, writing, and conversion of data files
 containing sub-resolution data.
 
-## Implementation of writing support
+### Implementation of writing support
 
 Writing can be broken down into these steps, which can be implemented in order:
 
@@ -503,34 +561,9 @@ to loop over each resolution as well as each series and transfer all
 the resolution levels.  The `imageconverter-noflat` and
 `ometiff-pyramid-writer` branches implement most of the needed logic.
 
-## Outstanding questions
+### Resolution
 
-- Do we need to store metadata to describe alignment offsets between
-  sub-resolution levels when the size difference between levels
-  results in pixels not aligned on pixel boundaries, for example with
-  non-power-of-two reductions? How is this handled by the existing
-  pyramid file formats? (Question from 2018 OME annual meeting in
-  Dundee.)
-
-## Sample files
-
-Simple scripts to convert existing file formats with sub-resolutions to
-TIFF and OME-TIFF files with SUBIFDS have been created for testing
-purposes:
-
-- [makepyramid-ndpi](makepyramid-ndpi)
-- [makepyramid-scn](makepyramid-scn)
-- [makepyramid-svs](makepyramid-svs)
-
-Of the three, `makepyramid-scn` generates the most compliant OME-TIFF
-files with the best tile sizes and compression types.  These will be
-used to test the TIFF and OME-TIFF support for sub-resolutions in
-Bio-Formats and OME Files prior to the creation of a writer which can
-generate the files directly.
-
-Note that the scripts require a copy of Bio-Formats `showinf`
-on the `PATH`.   They also require a copy of libtiff on
-`LD_LIBRARY_PATH` and `tiffinfo` and `tiffset` on the `PATH`. libtiff
-must be a release > 4.0.9 for BigTIFF SUBIFDS support in `tiffset`;
-at the time of writing this means building a copy from git.
-
+The release of Bio-Formats 6.0.0 includes support for reading and writing
+multi-resolution OME-TIFF - see 
+https://forum.image.sc/t/release-of-bio-formats-6-0-0/23099 or
+https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
