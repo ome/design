@@ -312,9 +312,9 @@ at the time of writing this means building a copy from git.
 ### Resolution
 
 From ome-model 6.0.0, the OME-TIFF file format specification includes support
-for multi-resolution images - see
-https://docs.openmicroscopy.org/ome-model/latest/ome-tiff/specification.html
-and https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
+for multi-resolution images - see the
+[OME-TIFF specification](https://docs.openmicroscopy.org/ome-model/latest/ome-tiff/specification.html)
+and the [Bio-Formats 6.0.0 announcement](https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html).
 
 ## Bio-Formats and OME-Files API and implementation changes <a name="implementation"></a>
 
@@ -564,6 +564,5 @@ the resolution levels.  The `imageconverter-noflat` and
 ### Resolution
 
 The release of Bio-Formats 6.0.0 includes support for reading and writing
-multi-resolution OME-TIFF - see 
-https://forum.image.sc/t/release-of-bio-formats-6-0-0/23099 or
-https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html.
+multi-resolution OME-TIFF - see the announcement on [image.sc](https://forum.image.sc/t/release-of-bio-formats-6-0-0/23099) or the
+[OME Website](https://www.openmicroscopy.org/2019/02/18/bio-formats-6-0-0.html).
