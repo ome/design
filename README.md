@@ -15,4 +15,5 @@ for more details.
 - [OME005: TIFF and OME-TIFF sub-resolution support](OME005/)
 - [OME006: ROI drawing controls](OME006/)
 - [OME007: Viewer controls](OME007/)
+- [OME008: CLI ROI plugin](OME008/)
 
